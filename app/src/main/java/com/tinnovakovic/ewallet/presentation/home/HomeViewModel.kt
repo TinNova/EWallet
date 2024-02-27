@@ -17,7 +17,7 @@ class HomeViewModel @Inject constructor(
     override fun onUiEvent(event: HomeContract.UiEvents) {
         when (event) {
             is HomeContract.UiEvents.ButtonClicked -> {
-                navManager.navigate(directions = NavDirection.searchScreen())
+                navManager.navigate(direction = NavDirection.searchScreen())
             }
         }
     }

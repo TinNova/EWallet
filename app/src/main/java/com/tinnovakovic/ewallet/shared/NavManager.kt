@@ -14,9 +14,9 @@ class NavManager {
 
     // The navigate function can be used to trigger the navigation based on the provided NavCommand
     fun navigate(
-        directions: NavCommand
+        direction: NavCommand
     ) {
-        commands.value = directions
+        commands.value = direction
     }
 
 }

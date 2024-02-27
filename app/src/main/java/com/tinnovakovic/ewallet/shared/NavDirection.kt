@@ -12,14 +12,17 @@ object NavDirection {
 
     }
 
-//    val home = object : NavCommand {
-//
-//        override val arguments = emptyList<NamedNavArgument>()
-//
-//        override val destinationRoute = Destination.Home.name
-//
-//    }
-//
+    val homeScreen = object : NavCommand {
+
+        override val arguments = emptyList<NamedNavArgument>()
+
+        override val destinationRoute = Destination.Home.name
+
+    }
+
+    //TODO:
+    //method only required if passing a value to searchScreen
+    //refactor to val
     fun searchScreen(
     ) = object : NavCommand {
 

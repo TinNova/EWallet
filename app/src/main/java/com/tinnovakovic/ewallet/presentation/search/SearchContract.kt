@@ -11,10 +11,13 @@ interface SearchContract {
 
     @Immutable
     data class UiState(
-        val number: Int
+        val searchText: String
     ) : BaseUiState {}
 
     sealed class UiEvents : BaseUiEvent {
-        data object ButtonClicked : UiEvents()
+        data object Initialise: UiEvents()
+        data object UpButtonClicked : UiEvents()
+        data class SearchTextChanged(val searchText: String) : UiEvents()
+
     }
 }
