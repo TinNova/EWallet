@@ -66,10 +66,11 @@ fun GreetingPreview() {
 }
 
 // TODO:
-//  -- Question: How would you store Wallet Address in App
+//  -- Question: How would you store a private key in an App
 //    --  Answer: I would only store the Wallet Address while the app is active, it will be stored in encrypted SharedPref (DataStore exists but it doesn't have encryption capabilities.)
 //    --  The moment the app terminates I would delete the Wallet Address.
 //    --  Everytime the user logs in or the Wallet Address is requested but the value in SharedPref is null I would request it again via the secured HTTPS protocol, I would encrypt it and save it in sharedPref, then read it from sharedPref (following the offline app best practises of single source of truth.)
+//        -- Alternatively I would never save the private key, I would always get it from HTTPS whenever it is required
 
 // TODO:
-//  -- Add the Wallet Address inside encrypted SharedPref
+//  -- Pretend you have a private key, retrieve it from a repo that returns a string "pretendPrivateKey", save it in sharedPref? - Might be overkill...

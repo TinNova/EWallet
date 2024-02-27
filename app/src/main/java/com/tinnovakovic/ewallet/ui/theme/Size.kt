@@ -4,7 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-data class Spacing(
+data class Size(
     val extraSmall: Dp = 4.dp,
     val small: Dp = 8.dp,
     val medium: Dp = 16.dp,
@@ -15,5 +15,5 @@ data class Spacing(
     val topAppBarHeight: Dp = 56.dp,
 )
 
-val MaterialTheme.spacing: Spacing
-    get() = Spacing()
+val MaterialTheme.size: Size
+    get() = Size()

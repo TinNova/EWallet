@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import com.tinnovakovic.ewallet.ui.theme.size
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -51,18 +53,18 @@ fun HomeScreenContent(
 
         Text(
             text = "Wallet Address",
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(MaterialTheme.size.medium)
         )
         Text(
             text = "Hard coded wallet address",
             fontSize = 16.sp,
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(MaterialTheme.size.medium)
         ) //Put it in encrypted sharedPref
 
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.size.medium + MaterialTheme.size.extraLarge))
         OutlinedButton(
-            shape = RoundedCornerShape(16.dp),
-            contentPadding = PaddingValues(horizontal = 64.dp, vertical = 24.dp),
+            shape = RoundedCornerShape(MaterialTheme.size.medium),
+            contentPadding = PaddingValues(horizontal = MaterialTheme.size.extraLarge, vertical = MaterialTheme.size.large),
             onClick = {
                 uiAction(UiEvents.ButtonClicked)
             }
