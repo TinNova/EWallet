@@ -48,7 +48,9 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
 
+        buildConfigField("String", "ETHPLORER_API_KEY", "\"${properties.getProperty("ETHPLORER_API_KEY")}\"")
         buildConfigField("String", "ETHERSCAN_API_KEY", "\"${properties.getProperty("ETHERSCAN_API_KEY")}\"")
+
     }
 
     buildTypes {

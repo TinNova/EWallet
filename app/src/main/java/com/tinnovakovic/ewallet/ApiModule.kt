@@ -1,6 +1,7 @@
 package com.tinnovakovic.ewallet
 
 import com.google.gson.Gson
+import com.tinnovakovic.ewallet.data.EtherscanApi
 import com.tinnovakovic.ewallet.data.EthplorerApi
 import dagger.Module
 import dagger.Provides
@@ -18,7 +19,7 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun providesRetrofit(okHttpClient: OkHttpClient.Builder, gsonConverterFactory: GsonConverterFactory): EthplorerApi {
+    fun providesEthplorerApi(okHttpClient: OkHttpClient.Builder, gsonConverterFactory: GsonConverterFactory): EthplorerApi {
         return Retrofit.Builder()
             .baseUrl("https://api.ethplorer.io/")
             .client(
@@ -28,6 +29,20 @@ object ApiModule {
             .addConverterFactory(gsonConverterFactory)
             .build()
             .create(EthplorerApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesEtherscanApi(okHttpClient: OkHttpClient.Builder, gsonConverterFactory: GsonConverterFactory): EtherscanApi {
+        return Retrofit.Builder()
+            .baseUrl("https://api.etherscan.io/")
+            .client(
+                okHttpClient
+                    .build()
+            )
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+            .create(EtherscanApi::class.java)
     }
 
     @Provides

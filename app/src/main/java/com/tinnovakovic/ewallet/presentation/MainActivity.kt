@@ -74,8 +74,13 @@ fun GreetingPreview() {
 //  -- Question: Architecture that facilitates future changes & What would you like to highlight
 //    --  Answer: I'd like to highlight the InMemoryCache, I created it as an interface so that it can be reused
 //    --  I created it to save the topTokens, without the InMemoryCache the topTokens would have to be saved as a global variable which could affect the single source of truth principle and pose a challenge to unit testing
+//  -- Question: How do you handle rate limiting
+//    --  Answer: The GetTopTokensUseCase helps by filtering the list, it only receives a list after a half second debounce and we save the list of 20 tokens and fetch them
+
 // TODO:
 //  -- First complete the main function of the app
+//    -- Work on the rate limiting, create a delay between calls of 200ms and handle a rate limiting error as well
+//      -- Handle it as an interface so it can be used in other parts of the code
 //  -- Second test the main function of the app
 //  -- Third, consider animations
 //  -- Animate the button like this: https://dribbble.com/shots/17734097-Uber-Green-App-Animation-Exploration

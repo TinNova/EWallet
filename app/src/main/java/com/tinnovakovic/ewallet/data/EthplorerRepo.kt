@@ -10,11 +10,4 @@ class EthplorerRepo @Inject constructor(
         return ethplorerApi.getTopTokens()
     }
 
-    suspend fun getAddressInfo(walletAddress: String, tokenAddress: String): AddressInfoData {
-        return ethplorerApi.getAddressInfo(
-            walletAddress = walletAddress,
-            tokenAddress = tokenAddress
-        )
-    }
-
 }

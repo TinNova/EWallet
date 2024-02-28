@@ -2,6 +2,7 @@ package com.tinnovakovic.ewallet.domain
 
 import com.tinnovakovic.ewallet.shared.InMemoryCache
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
