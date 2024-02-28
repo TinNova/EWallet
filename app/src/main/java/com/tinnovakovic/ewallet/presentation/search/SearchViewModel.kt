@@ -3,6 +3,8 @@ package com.tinnovakovic.ewallet.presentation.search
 import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.viewModelScope
+import com.tinnovakovic.ewallet.domain.FilterListOfTokensUseCase
+import com.tinnovakovic.ewallet.domain.GetTokensWithBalancesUseCase
 import com.tinnovakovic.ewallet.shared.NavDirection
 import com.tinnovakovic.ewallet.shared.NavManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +20,9 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val navManager: NavManager
+    private val navManager: NavManager,
+    private val getTokensWithBalancesUseCase: GetTokensWithBalancesUseCase,
+    private val filterListOfTokensUseCase: FilterListOfTokensUseCase
 ) : SearchContract.ViewModel() {
 
     override val _uiState: MutableStateFlow<SearchContract.UiState> =
@@ -44,6 +48,8 @@ class SearchViewModel @Inject constructor(
                     searchJob = search(searchText) //start a new job with the new searchText
                 }
         }
+
+
     }
 
     override fun onUiEvent(event: SearchContract.UiEvents) {
@@ -61,6 +67,13 @@ class SearchViewModel @Inject constructor(
     private fun search(searchText: String): Job {
         Log.d("TINTINTEST", "search text: $searchText")
         return viewModelScope.launch {
+            val filteredTokens = filterListOfTokensUseCase.execute(searchText)
+            val tokenBalances = getTokensWithBalancesUseCase.execute(filteredTokens)
+
+            updateUiState {
+                it.copy(tokenBalances = tokenBalances)
+            }
+
             //connect to api
         }
 
@@ -78,7 +91,8 @@ class SearchViewModel @Inject constructor(
 
     companion object {
         private val defaultUiState = SearchContract.UiState(
-            searchText = ""
+            searchText = "",
+            tokenBalances = emptyList()
         )
 
         // half a second

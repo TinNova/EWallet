@@ -65,12 +65,21 @@ fun GreetingPreview() {
     }
 }
 
-// TODO:
+// TODO Question From Argent:
 //  -- Question: How would you store a private key in an App
 //    --  Answer: I would only store the Wallet Address while the app is active, it will be stored in encrypted SharedPref (DataStore exists but it doesn't have encryption capabilities.)
 //    --  The moment the app terminates I would delete the Wallet Address.
 //    --  Everytime the user logs in or the Wallet Address is requested but the value in SharedPref is null I would request it again via the secured HTTPS protocol, I would encrypt it and save it in sharedPref, then read it from sharedPref (following the offline app best practises of single source of truth.)
 //        -- Alternatively I would never save the private key, I would always get it from HTTPS whenever it is required
-
+//  -- Question: Architecture that facilitates future changes & What would you like to highlight
+//    --  Answer: I'd like to highlight the InMemoryCache, I created it as an interface so that it can be reused
+//    --  I created it to save the topTokens, without the InMemoryCache the topTokens would have to be saved as a global variable which could affect the single source of truth principle and pose a challenge to unit testing
 // TODO:
+//  -- First complete the main function of the app
+//  -- Second test the main function of the app
+//  -- Third, consider animations
+//  -- Animate the button like this: https://dribbble.com/shots/17734097-Uber-Green-App-Animation-Exploration
+//  -- Animate TopAppBar like this: https://m3.material.io/components/top-app-bar/guidelines#0e9878bc-c1e1-46a5-afa5-4b43a1949dc1
+//  -- Use the same colours as in: https://m3.material.io/components/top-app-bar/guidelines#0e9878bc-c1e1-46a5-afa5-4b43a1949dc1
+//  -- Animate search bar?: https://dribbble.com/shots/20691553-Animated-Search-Bar-for-an-e-commerce-app
 //  -- Pretend you have a private key, retrieve it from a repo that returns a string "pretendPrivateKey", save it in sharedPref? - Might be overkill...
