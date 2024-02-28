@@ -22,15 +22,8 @@ class GetTopTokensUseCase @Inject constructor(
 
     private fun mapDataTokenToDomainToken(dataTokens: List<DataToken>): List<Token> {
         return dataTokens.mapNotNull {
-            if (it.name != null || it.symbol != null) {
-                Token(
-                    address = it.address,
-                    name = it.name,
-                    symbol = it.symbol
-                )
-            } else {
-                null
-            }
+            val symbol = it.symbol ?: return@mapNotNull null
+            Token(address = it.address, symbol = symbol)
         }
     }
 }

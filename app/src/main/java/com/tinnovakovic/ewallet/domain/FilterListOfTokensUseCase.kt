@@ -10,7 +10,7 @@ class FilterListOfTokensUseCase @Inject constructor(
     suspend fun execute(searchText: String): List<Token> {
         val tokens = getTopTokensUseCase.execute()
         return tokens.filter {
-            it.symbol.contains(searchText.uppercase(Locale.getDefault()))
+            it.symbol.startsWith(searchText.uppercase(Locale.getDefault()))
         }
     }
 }
