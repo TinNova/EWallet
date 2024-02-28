@@ -73,10 +73,7 @@ class SearchViewModel @Inject constructor(
             updateUiState {
                 it.copy(tokenBalances = tokenBalances)
             }
-
-            //connect to api
         }
-
     }
 
     private fun onSearchTextChanged(searchText: String) {
@@ -95,8 +92,7 @@ class SearchViewModel @Inject constructor(
             tokenBalances = emptyList()
         )
 
-        // half a second
-        private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 500L
+        private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 500L // half a second
         private const val MINIMUM_INPUT_LENGTH = 1
     }
 }
