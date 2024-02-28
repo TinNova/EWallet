@@ -23,7 +23,7 @@ class GetTopTokensUseCase @Inject constructor(
     private fun mapDataTokenToDomainToken(dataTokens: List<DataToken>): List<Token> {
         return dataTokens.mapNotNull {
             val symbol = it.symbol ?: return@mapNotNull null
-            Token(address = it.address, symbol = symbol)
+            Token(address = it.address, symbol = symbol, decimals = it.decimals)
         }
     }
 }

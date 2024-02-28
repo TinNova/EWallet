@@ -70,15 +70,16 @@ class SearchViewModel @Inject constructor(
             val filteredTokens = filterListOfTokensUseCase.execute(searchText)
             val tokenBalances = getTokensWithBalancesUseCase.execute(filteredTokens)
 
+
             updateUiState {
-                it.copy(tokenBalances = tokenBalances)
+                it.copy(tokenBalances = tokenBalances, isLoading = false)
             }
         }
     }
 
     private fun onSearchTextChanged(searchText: String) {
         updateUiState {
-            it.copy(searchText = searchText)
+            it.copy(searchText = searchText, isLoading = true)
         }
 
         if (searchText.length >= MINIMUM_INPUT_LENGTH) {
@@ -89,10 +90,11 @@ class SearchViewModel @Inject constructor(
     companion object {
         private val defaultUiState = SearchContract.UiState(
             searchText = "",
-            tokenBalances = emptyList()
+            tokenBalances = emptyList(),
+            isLoading = false
         )
 
-        private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 500L // half a second
+        private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 300L // half a second
         private const val MINIMUM_INPUT_LENGTH = 1
     }
 }

@@ -7,4 +7,5 @@ data class TopTokensData(
 data class Token(
     val address: String,
     val symbol: String?,
+    val decimals: String,
 )

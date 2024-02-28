@@ -1,16 +1,24 @@
 package com.tinnovakovic.ewallet.presentation.search
 
+import android.graphics.Color
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,13 +30,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight.Companion.W600
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tinnovakovic.ewallet.domain.TokenBalance
 import com.tinnovakovic.ewallet.presentation.search.SearchContract.*
 import com.tinnovakovic.ewallet.ui.theme.size
 
@@ -75,8 +88,85 @@ fun SearchScreenContent(
                 .fillMaxSize()
         ) {
             SearchTextField(uiState.searchText, uiAction)
-            // TODO: Add lazy column to display results
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                if (uiState.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = MaterialTheme.size.medium),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                } else {
+
+                    val tokenBalances = uiState.tokenBalances
+
+                    items(count = tokenBalances.size) { index ->
+                        val tokenBalance = tokenBalances[index]
+                        TokenBalanceItem(tokenBalance)
+                    }
+                }
+
+//                when {
+//                    uiState.searchText.isBlank() || uiState.tokenBalancesResult is SearchResultsModel.Prompt -> {
+//                        item {
+//                            Text(text = "Search For A Token") //Consider that search bar animation here...
+////                            InitialSearchScreen(R.string.search_initial_empty_message)
+//                        }
+//                    }
+//
+//                    uiState.tokenBalancesResult is SearchResultsModel.NoResults -> {
+//                        item {
+//                            Text(text = "No Tokens Found")
+//                        }
+//                    }
+//
+//                    uiState.tokenBalancesResult is SearchResultsModel.Error -> {
+//                        item {
+//                            Text(text = uiState.tokenBalancesResult.errorMessage)
+////                            ErrorSearchScreen(errorMessage = uiState.tokenBalancesResult.errorMessage)
+//                        }
+//                    }
+//
+//                    uiState.tokenBalancesResult is SearchResultsModel.Success -> {
+//                        val tokenBalances = uiState.tokenBalancesResult.tokenBalances
+//
+//                        items(count = tokenBalances.size) { index ->
+//                            val tokenBalance = tokenBalances[index]
+//                            TokenBalanceItem(tokenBalance)
+//                        }
+//                    }
+//                }
+            }
         }
+    }
+}
+
+@Composable
+private fun TokenBalanceItem(tokenBalance: TokenBalance) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = MaterialTheme.size.extraLarge,
+                vertical = MaterialTheme.size.medium
+            )
+    ) {
+        Text(
+            text = "${tokenBalance.symbol} Balance:",
+            fontWeight = W600
+        )
+        Text(
+            text = "${tokenBalance.result} ${tokenBalance.symbol}",
+            color = if (tokenBalance.isResultZero) Red else Green
+        )
     }
 }
 

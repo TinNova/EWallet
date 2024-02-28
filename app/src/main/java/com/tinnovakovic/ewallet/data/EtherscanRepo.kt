@@ -6,7 +6,7 @@ class EtherscanRepo @Inject constructor(
     private val etherscanApi: EtherscanApi
 ) {
 
-    suspend fun getLatestTokenBalance(walletAddress: String, tokenAddress: String): TokenBalance {
+    suspend fun getLatestTokenBalance(walletAddress: String, tokenAddress: String): TokenBalanceData {
         return etherscanApi
             .getLatestTokenBalance(
                 walletAddress = walletAddress,
