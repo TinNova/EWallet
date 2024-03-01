@@ -1,5 +1,7 @@
 package com.tinnovakovic.ewallet.data
 
+import android.util.Log
+import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException
 import com.tinnovakovic.ewallet.shared.RetryIo
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -29,8 +31,12 @@ class EtherscanRepo @Inject constructor(
         tokenAddress: String
     ): TokenBalanceData {
 
-        if (throwable is HttpException && throwable.code() == 429) {
+        if (throwable is EtherScanApiKeyException.RateLimitException ||
+            (throwable is HttpException && throwable.code() == 429)
+        ) {
+
             return retryIo.retryIO {
+                Log.d("TINTIN", "retry because of throwable: $throwable")
                 etherscanApi.getLatestTokenBalance(
                     walletAddress = walletAddress,
                     tokenAddress = tokenAddress

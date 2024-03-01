@@ -1,6 +1,9 @@
 package com.tinnovakovic.ewallet.shared
 
 import com.tinnovakovic.ewallet.data.TokenBalanceData
+import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException.InvalidApiKeyException
+import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException.InvalidApiKeyRateLimitException
+import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException.RateLimitException
 import okhttp3.Request
 import okio.Timeout
 import retrofit2.Call
@@ -9,11 +12,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 import java.lang.RuntimeException
-
-data class EtherScanApiKeyException(
-    val status: String,
-    val result: String
-) : Throwable()
 
 class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
     Call<Result<TokenBalanceData>> {
@@ -25,7 +23,10 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                     call: Call<TokenBalanceData>,
                     response: Response<TokenBalanceData>
                 ) {
+
                     if (response.isSuccessful) {
+                          // to test bad response
+//                        val responseBody: TokenBalanceData? = TokenBalanceData(status="0", message="NOTOK", result="Max rate limit reached")
                         val responseBody = response.body()
                         if (responseBody != null) {
                             val status = responseBody.status
@@ -34,20 +35,21 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                                 // Successful response
                                 callback.onResponse(
                                     this@EtherscanResultCall,
-                                    Response.success(Result.success(response.body()!!))
+                                    Response.success(Result.success(responseBody))
                                 )
                             } else {
                                 callback.onResponse(
                                     this@EtherscanResultCall,
                                     Response.success(
                                         Result.failure(
-                                            EtherScanApiKeyException(
-                                                status = response.body()!!.result,
-                                                result = response.body()!!.result
+                                            etherScanApiKeyExceptionHandler(
+                                                responseBody.status,
+                                                responseBody.result
                                             )
                                         )
                                     )
                                 )
+
                             }
                         }
                     } else {
@@ -64,9 +66,9 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
 
                 override fun onFailure(call: Call<TokenBalanceData>, t: Throwable) {
                     val errorMessage = when (t) {
-                        is EtherScanApiKeyException -> "Api Key Error" //TODO: Handle this better!!
+                        is EtherScanApiKeyException -> t.result
                         is IOException -> "No internet connection"
-                        is HttpException -> "Something went wrong!"
+                        is HttpException -> "Something went wrong!" //TODO handle this better
                         else -> t.localizedMessage
                     }
                     callback.onResponse(
@@ -104,5 +106,41 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
 
     override fun timeout(): Timeout {
         return delegate.timeout()
+    }
+
+    private fun etherScanApiKeyExceptionHandler(
+        status: String,
+        result: String
+    ): EtherScanApiKeyException {
+
+        return when (result) {
+            RATE_LIMIT_REACHED -> {
+                RateLimitException(
+                    status = status,
+                    result = RATE_LIMIT_REACHED
+                )
+            }
+
+            INVALID_API_KEY -> {
+                InvalidApiKeyException(
+                    status = status,
+                    result = INVALID_API_KEY
+                )
+            }
+
+            else -> {
+                InvalidApiKeyRateLimitException(
+                    status = status,
+                    result = INVALID_API_KEY_RATE_LIMIT_REACHED
+                )
+            }
+        }
+    }
+
+    companion object {
+        const val RATE_LIMIT_REACHED = "Max rate limit reached"
+        const val INVALID_API_KEY = "Invalid API Key"
+        const val INVALID_API_KEY_RATE_LIMIT_REACHED =
+            "Too many invalid api key attempts, please try again later"
     }
 }
