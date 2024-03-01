@@ -77,21 +77,26 @@ fun GreetingPreview() {
 //  -- Question: How do you handle rate limiting
 //    --  Answer: The GetTopTokensUseCase helps by filtering the list, it only receives a list after a half second debounce and we save the list of 20 tokens and fetch them
 //    --  Answer: In GetTokensWithBalancesUseCase we have a delay of 200ms if the list contains 5 or more tokens, this prevents the limit ever being hit, this is preferred to hitting the limit and then doing exponential backoff
+//  -- Question: What improvements would you make
+//    --  Answer: If the rate limiting didn't exist I would create a loop that starts every call in an async call prevent a queue occuring where one needs to complete before the next
 
 // TODO:
 //  -- First complete the main function of the app
-//    -- If we've fetched data for "u" we don't have to fetch data for "ud" instead we can filter the original data to display only results with "ud"
-//    -- Improve HTTP Error handling, make sure we handle all the Ethplorer errors can send us.
-//  -- Second test the main function of the app
+//    -- No Results error message never occurs
+//    -- Improve HTTP Error handling, make sure we handle all the Ethplorer and Ethscaner errors can send us.
+//  -- Second write tests for the main function of the app
+//    -- Specifically test the 429, rate limiting code!
 //  -- Third, consider animations
 //  -- Animate the button like this: https://dribbble.com/shots/17734097-Uber-Green-App-Animation-Exploration
 //  -- Animate TopAppBar like this: https://m3.material.io/components/top-app-bar/guidelines#0e9878bc-c1e1-46a5-afa5-4b43a1949dc1
 //  -- Use the same colours as in: https://m3.material.io/components/top-app-bar/guidelines#0e9878bc-c1e1-46a5-afa5-4b43a1949dc1
 //  -- Animate search bar?: https://dribbble.com/shots/20691553-Animated-Search-Bar-for-an-e-commerce-app
 //  -- Pretend you have a private key, retrieve it from a repo that returns a string "pretendPrivateKey", save it in sharedPref? - Might be overkill...
+//  -- Consider returning the tokens in a flow, they will all display as quickly as they do now, but the user will get the first results faster..this is a product decision..
 
 
 // DONE
+//    -- If we've fetched data for "u" we don't have to fetch data for "ud" instead we can filter the original data to display only results with "ud"
 //    -- Type "u", deleting it, then typing "u" again doesn't do a second network call
 //    -- Work on the rate limiting, create a delay between calls of 200ms and handle a rate limiting error as well
 //      -- Handle it as an interface so it can be used in other parts of the code

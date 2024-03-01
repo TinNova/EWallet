@@ -5,19 +5,49 @@ import com.tinnovakovic.ewallet.data.EtherscanRepo
 import com.tinnovakovic.ewallet.data.TokenBalanceData
 import com.tinnovakovic.ewallet.shared.ContextProvider
 import com.tinnovakovic.ewallet.shared.RateLimitHandler
-import kotlinx.coroutines.delay
 import java.math.BigInteger
+import java.util.Locale
 import javax.inject.Inject
 
 class GetTokensWithBalancesUseCase @Inject constructor(
     private val etherscanRepo: EtherscanRepo,
     private val contextProvider: ContextProvider,
     private val fromSmallestDecimalRepresentationUseCase: FromSmallestDecimalRepresentationUseCase,
-    private val rateLimitHandler: RateLimitHandler
+    private val rateLimitHandler: RateLimitHandler,
+    private val getTopTokensUseCase: GetTopTokensUseCase
 ) {
 
-    suspend fun execute(tokens: List<Token>): List<TokenBalance> {
+    var savedSearchStartedWith: String = ""
+    var savedTokenBalances: MutableList<TokenBalance> = mutableListOf()
 
+    suspend fun execute(searchText: String): List<TokenBalance> {
+        // savedSearch letter is blank, do a network call
+        return if (savedSearchStartedWith.isBlank()) {
+            savedSearchStartedWith = searchText.first().toString()
+            val tokens = getTopTokensUseCase.execute()
+            val tokensFilteredByFirstLetter = tokens.filter {
+                it.symbol.startsWith(searchText.uppercase(Locale.getDefault()).first())
+            }
+
+            getLatestTokenBalances(tokensFilteredByFirstLetter)
+
+            // searchText starts with the same letter as savedSearch, just filter
+        } else if (searchText.isNotBlank() && savedSearchStartedWith == searchText.first()
+                .toString()
+        ) {
+            savedSearchStartedWith = searchText.first().toString()
+            val filteredTokenBalances =
+                savedTokenBalances.filter { it.symbol.startsWith(searchText.uppercase(Locale.getDefault())) }
+            filteredTokenBalances
+
+            // searchText is blank, return an empty list and update saveSearch
+        } else {
+            savedSearchStartedWith = ""
+            emptyList()
+        }
+    }
+
+    private suspend fun getLatestTokenBalances(tokens: List<Token>): List<TokenBalance> {
         val tokenBalances: List<TokenBalance> = tokens.mapNotNull {
             val tokenBalanceData: TokenBalanceData? = etherscanRepo.getLatestTokenBalance(
                 walletAddress = contextProvider.getContext().getString(R.string.wallet_address),
@@ -35,8 +65,15 @@ class GetTokensWithBalancesUseCase @Inject constructor(
                     isResultZero = tokenBalanceData.result.toBigInteger() == BigInteger.ZERO
                 )
 
-                if (tokens.size >= 5) rateLimitHandler.delay()
+                if (tokens.size >= 5) {
+                    rateLimitHandler.rateLimitDelay()
+                }
+//                    savedTokenBalances.add(tokenBalance)
+//                    tokenBalance
+//                } else {
+                savedTokenBalances.add(tokenBalance)
                 tokenBalance
+//                }
             } else {
                 null// skip it if it's null
             }

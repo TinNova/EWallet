@@ -1,9 +1,10 @@
 package com.tinnovakovic.ewallet.shared
 
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class RateLimitHandlerImpl @Inject constructor() : RateLimitHandler {
-    override suspend fun delay(delayInMillis: Long) {
+    override suspend fun rateLimitDelay(delayInMillis: Long) {
         delay(delayInMillis)
     }
 

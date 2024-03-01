@@ -59,12 +59,6 @@ fun SearchScreenContent(
     uiState: UiState,
     uiAction: (UiEvents) -> Unit,
 ) {
-
-    LaunchedEffect(true) {
-        // This instead on using init{} in viewModel to prevent race condition
-        uiAction(UiEvents.Initialise)
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(

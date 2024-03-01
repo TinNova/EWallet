@@ -17,7 +17,6 @@ interface SearchContract {
     ) : BaseUiState {}
 
     sealed class UiEvents : BaseUiEvent {
-        data object Initialise: UiEvents()
         data object UpButtonClicked : UiEvents()
         data class SearchTextChanged(val searchText: String) : UiEvents()
 
