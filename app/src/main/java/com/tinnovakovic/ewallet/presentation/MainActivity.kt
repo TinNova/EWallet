@@ -80,10 +80,8 @@ fun GreetingPreview() {
 
 // TODO:
 //  -- First complete the main function of the app
-//    -- Work on the rate limiting, create a delay between calls of 200ms and handle a rate limiting error as well
-//      -- Handle it as an interface so it can be used in other parts of the code
 //    -- Type "u", deleting it, then typing "u" again doesn't do a second network call
-//    -- How to handle exception in Coroutines, handle 429 exception specifically
+//    -- If we've fetched data for "u" we don't have to fetch data for "ud" instead we can filter the original data to display only results with "ud"
 //  -- Second test the main function of the app
 //  -- Third, consider animations
 //  -- Animate the button like this: https://dribbble.com/shots/17734097-Uber-Green-App-Animation-Exploration
@@ -91,3 +89,9 @@ fun GreetingPreview() {
 //  -- Use the same colours as in: https://m3.material.io/components/top-app-bar/guidelines#0e9878bc-c1e1-46a5-afa5-4b43a1949dc1
 //  -- Animate search bar?: https://dribbble.com/shots/20691553-Animated-Search-Bar-for-an-e-commerce-app
 //  -- Pretend you have a private key, retrieve it from a repo that returns a string "pretendPrivateKey", save it in sharedPref? - Might be overkill...
+
+
+// DONE
+//    -- Work on the rate limiting, create a delay between calls of 200ms and handle a rate limiting error as well
+//      -- Handle it as an interface so it can be used in other parts of the code
+//    -- How to handle exception in Coroutines, handle 429 exception specifically

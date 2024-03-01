@@ -5,6 +5,7 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.viewModelScope
 import com.tinnovakovic.ewallet.domain.FilterListOfTokensUseCase
 import com.tinnovakovic.ewallet.domain.GetTokensWithBalancesUseCase
+import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException
 import com.tinnovakovic.ewallet.shared.NavDirection
 import com.tinnovakovic.ewallet.shared.NavManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +18,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.io.IOException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -89,20 +92,29 @@ class SearchViewModel @Inject constructor(
     }
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        val errorMessage = if (throwable is HttpException) {
-            when (throwable.code()) {
-                429 -> "Rate limit exceeded. Please try again later."
-                404 -> "Resource not found."
-                500 -> "Internal server error."
-                else -> "Unknown error occurred."
+        val errorMessage = when (throwable) {
+            is HttpException -> {
+                when (throwable.code()) {
+                    429 -> "Rate limit exceeded. Please try again later."
+                    404 -> "Resource not found."
+                    500 -> "Internal server error."
+                    else -> "Unknown error occurred."
+                }
             }
-        } else {
-            "Non-HTTP exception encountered."
+            is IOException -> "No internet, we've cleared the search bar, please search again.."
+            is EtherScanApiKeyException -> {
+                throwable.result
+            }
+
+            else -> throwable.message ?: "Unknown Error, Please Try Again."
         }
 
         updateUiState {
 
-            it.copy(searchResultsModel = SearchResultsModel.Error("There is an error fetching the results.\nWe've cleared the search bar, please search again."))
+            it.copy(
+                isLoading = false,
+                searchResultsModel = SearchResultsModel.Error(errorMessage)
+            )
         }
     }
 

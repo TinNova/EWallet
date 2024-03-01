@@ -12,6 +12,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 import java.lang.RuntimeException
+import java.net.UnknownHostException
 
 class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
     Call<Result<TokenBalanceData>> {
@@ -25,7 +26,7 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                 ) {
 
                     if (response.isSuccessful) {
-                          // to test bad response
+                        // to test bad response
 //                        val responseBody: TokenBalanceData? = TokenBalanceData(status="0", message="NOTOK", result="Max rate limit reached")
                         val responseBody = response.body()
                         if (responseBody != null) {
@@ -49,7 +50,6 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                                         )
                                     )
                                 )
-
                             }
                         }
                     } else {

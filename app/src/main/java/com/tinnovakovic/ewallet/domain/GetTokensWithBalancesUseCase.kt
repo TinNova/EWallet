@@ -18,24 +18,30 @@ class GetTokensWithBalancesUseCase @Inject constructor(
 
     suspend fun execute(tokens: List<Token>): List<TokenBalance> {
 
-        return tokens.map {
-            val tokenBalanceData = etherscanRepo.getLatestTokenBalance(
+        val tokenBalances: List<TokenBalance> = tokens.mapNotNull {
+            val tokenBalanceData: TokenBalanceData? = etherscanRepo.getLatestTokenBalance(
                 walletAddress = contextProvider.getContext().getString(R.string.wallet_address),
                 tokenAddress = it.address
-            ).getOrThrow()
+            ).getOrNull()
 
-            val tokenBalance = TokenBalance(
-                symbol = it.symbol,
-                result = fromSmallestDecimalRepresentationUseCase
-                    .execute(
-                        smallestBalance = tokenBalanceData.result.toBigInteger(),
-                        decimalPlaces = it.decimals.toInt()
-                    ),
-                isResultZero = tokenBalanceData.result.toBigInteger() == BigInteger.ZERO
-            )
+            if (tokenBalanceData != null) {
+                val tokenBalance = TokenBalance(
+                    symbol = it.symbol,
+                    result = fromSmallestDecimalRepresentationUseCase
+                        .execute(
+                            smallestBalance = tokenBalanceData.result.toBigInteger(),
+                            decimalPlaces = it.decimals.toInt()
+                        ),
+                    isResultZero = tokenBalanceData.result.toBigInteger() == BigInteger.ZERO
+                )
 
-            if (tokens.size >= 5) rateLimitHandler.delay()
-            tokenBalance
+                if (tokens.size >= 5) rateLimitHandler.delay()
+                tokenBalance
+            } else {
+                null// skip it if it's null
+            }
         }
+
+        return tokenBalances
     }
 }
