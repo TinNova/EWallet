@@ -1,16 +1,13 @@
 package com.tinnovakovic.ewallet.presentation.search
 
-import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -105,44 +102,36 @@ fun SearchScreenContent(
                     }
                 } else {
 
-                    val tokenBalances = uiState.tokenBalances
+                    when {
+                        uiState.searchText.isBlank() || uiState.searchResultsModel is SearchResultsModel.Prompt -> {
+                            item {
+                                Text(text = "Search For A Token") //Consider that search bar animation here...
+//                            InitialSearchScreen(R.string.search_initial_empty_message)
+                            }
+                        }
 
-                    items(count = tokenBalances.size) { index ->
-                        val tokenBalance = tokenBalances[index]
-                        TokenBalanceItem(tokenBalance)
+                        uiState.searchResultsModel is SearchResultsModel.NoResults -> {
+                            item {
+                                Text(text = "No Tokens Found")
+                            }
+                        }
+
+                        uiState.searchResultsModel is SearchResultsModel.Error -> {
+                            item {
+                                Text(text = uiState.searchResultsModel.errorMessage)
+                            }
+                        }
+
+                        uiState.searchResultsModel is SearchResultsModel.Success -> {
+                            val tokenBalances = uiState.searchResultsModel.tokenBalances
+
+                            items(count = tokenBalances.size) { index ->
+                                val tokenBalance = tokenBalances[index]
+                                TokenBalanceItem(tokenBalance)
+                            }
+                        }
                     }
                 }
-
-//                when {
-//                    uiState.searchText.isBlank() || uiState.tokenBalancesResult is SearchResultsModel.Prompt -> {
-//                        item {
-//                            Text(text = "Search For A Token") //Consider that search bar animation here...
-////                            InitialSearchScreen(R.string.search_initial_empty_message)
-//                        }
-//                    }
-//
-//                    uiState.tokenBalancesResult is SearchResultsModel.NoResults -> {
-//                        item {
-//                            Text(text = "No Tokens Found")
-//                        }
-//                    }
-//
-//                    uiState.tokenBalancesResult is SearchResultsModel.Error -> {
-//                        item {
-//                            Text(text = uiState.tokenBalancesResult.errorMessage)
-////                            ErrorSearchScreen(errorMessage = uiState.tokenBalancesResult.errorMessage)
-//                        }
-//                    }
-//
-//                    uiState.tokenBalancesResult is SearchResultsModel.Success -> {
-//                        val tokenBalances = uiState.tokenBalancesResult.tokenBalances
-//
-//                        items(count = tokenBalances.size) { index ->
-//                            val tokenBalance = tokenBalances[index]
-//                            TokenBalanceItem(tokenBalance)
-//                        }
-//                    }
-//                }
             }
         }
     }

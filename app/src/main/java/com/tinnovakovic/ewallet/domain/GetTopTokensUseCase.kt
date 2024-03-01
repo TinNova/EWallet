@@ -13,7 +13,7 @@ class GetTopTokensUseCase @Inject constructor(
         return if (topTokensInMemoryCache.cache.value.isNotEmpty()) {
             topTokensInMemoryCache.cache.value
         } else {
-            val dataTokens = ethplorerRepo.getTopTokens().tokens
+            val dataTokens = ethplorerRepo.getTopTokens().getOrThrow().tokens
             val domainTokens = mapDataTokenToDomainToken(dataTokens)
             topTokensInMemoryCache.updateCache(domainTokens)
             topTokensInMemoryCache.cache.value

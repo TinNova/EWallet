@@ -1,6 +1,5 @@
 package com.tinnovakovic.ewallet.presentation.search
 
-import com.tinnovakovic.ewallet.domain.TokenBalance
 import com.tinnovakovic.ewallet.shared.mvi.BaseUiEvent
 import com.tinnovakovic.ewallet.shared.mvi.BaseUiState
 import com.tinnovakovic.ewallet.shared.mvi.BaseViewModel
@@ -13,7 +12,7 @@ interface SearchContract {
     @Immutable
     data class UiState(
         val searchText: String,
-        val tokenBalances: List<TokenBalance>,
+        val searchResultsModel: SearchResultsModel,
         val isLoading: Boolean
     ) : BaseUiState {}
 

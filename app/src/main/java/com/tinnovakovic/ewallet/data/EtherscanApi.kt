@@ -15,6 +15,6 @@ interface EtherscanApi {
         @Query("contractaddress") tokenAddress: String,
         @Query("address") walletAddress: String,
         @Query("apiKey") apiKey: String = BuildConfig.ETHERSCAN_API_KEY //better to be in an interceptor?
-    ): TokenBalanceData
+    ): Result<TokenBalanceData>
 
 }

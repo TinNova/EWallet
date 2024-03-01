@@ -3,6 +3,8 @@ package com.tinnovakovic.ewallet
 import com.google.gson.Gson
 import com.tinnovakovic.ewallet.data.EtherscanApi
 import com.tinnovakovic.ewallet.data.EthplorerApi
+import com.tinnovakovic.ewallet.shared.ApiType
+import com.tinnovakovic.ewallet.shared.ResultCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,6 +29,7 @@ object ApiModule {
                     .build()
             )
             .addConverterFactory(gsonConverterFactory)
+            .addCallAdapterFactory(ResultCallAdapterFactory(ApiType.Generic))
             .build()
             .create(EthplorerApi::class.java)
     }
@@ -41,6 +44,7 @@ object ApiModule {
                     .build()
             )
             .addConverterFactory(gsonConverterFactory)
+            .addCallAdapterFactory(ResultCallAdapterFactory(ApiType.Etherscan))
             .build()
             .create(EtherscanApi::class.java)
     }
