@@ -3,6 +3,8 @@ package com.tinnovakovic.ewallet
 import android.app.Application
 import com.tinnovakovic.ewallet.shared.ContextProvider
 import com.tinnovakovic.ewallet.shared.ContextProviderImpl
+import com.tinnovakovic.ewallet.shared.ExceptionHandler
+import com.tinnovakovic.ewallet.shared.ExceptionHandlerImpl
 import com.tinnovakovic.ewallet.shared.RateLimitHandler
 import com.tinnovakovic.ewallet.shared.RateLimitHandlerImpl
 import com.tinnovakovic.ewallet.shared.RetryIo
@@ -19,7 +21,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesContextProvider(application: Application): ContextProvider = ContextProviderImpl(application)
+    fun providesContextProvider(application: Application): ContextProvider =
+        ContextProviderImpl(application)
 
     @Provides
     @Singleton
@@ -28,4 +31,9 @@ object AppModule {
     @Provides
     @Singleton
     fun providesRateLimitHandler(): RateLimitHandler = RateLimitHandlerImpl()
+
+    @Provides
+    @Singleton
+    fun providesExceptionHandler(): ExceptionHandler = ExceptionHandlerImpl()
+
 }

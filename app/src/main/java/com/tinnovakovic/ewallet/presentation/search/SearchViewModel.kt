@@ -5,7 +5,7 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.viewModelScope
 import com.tinnovakovic.ewallet.domain.FilterListOfTokensUseCase
 import com.tinnovakovic.ewallet.domain.GetTokensWithBalancesUseCase
-import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException
+import com.tinnovakovic.ewallet.shared.ExceptionHandler
 import com.tinnovakovic.ewallet.shared.NavDirection
 import com.tinnovakovic.ewallet.shared.NavManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,9 +17,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.io.IOException
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -27,7 +24,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val navManager: NavManager,
     private val getTokensWithBalancesUseCase: GetTokensWithBalancesUseCase,
-    private val filterListOfTokensUseCase: FilterListOfTokensUseCase
+    private val filterListOfTokensUseCase: FilterListOfTokensUseCase,
+    private val exceptionHandler: ExceptionHandler,
 ) : SearchContract.ViewModel() {
 
     override val _uiState: MutableStateFlow<SearchContract.UiState> =
@@ -68,7 +66,7 @@ class SearchViewModel @Inject constructor(
 
     private fun search(searchText: String): Job {
         Log.d("TINTINTEST", "search text: $searchText")
-        return viewModelScope.launch(exceptionHandler) {
+        return viewModelScope.launch(coExceptionHandler) {
             val filteredTokens = filterListOfTokensUseCase.execute(searchText)
             val tokenBalances = getTokensWithBalancesUseCase.execute(filteredTokens)
 
@@ -91,26 +89,10 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        val errorMessage = when (throwable) {
-            is HttpException -> {
-                when (throwable.code()) {
-                    429 -> "Rate limit exceeded. Please try again later."
-                    404 -> "Resource not found."
-                    500 -> "Internal server error."
-                    else -> "Unknown error occurred."
-                }
-            }
-            is IOException -> "No internet, we've cleared the search bar, please search again.."
-            is EtherScanApiKeyException -> {
-                throwable.result
-            }
-
-            else -> throwable.message ?: "Unknown Error, Please Try Again."
-        }
+    private val coExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        val errorMessage = exceptionHandler.getErrorMessage(throwable)
 
         updateUiState {
-
             it.copy(
                 isLoading = false,
                 searchResultsModel = SearchResultsModel.Error(errorMessage)
