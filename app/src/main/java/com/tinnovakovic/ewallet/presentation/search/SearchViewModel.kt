@@ -80,12 +80,18 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onSearchTextChanged(searchText: String) {
-        updateUiState {
-            it.copy(searchText = searchText, isLoading = true)
-        }
-
         if (searchText.length >= MINIMUM_INPUT_LENGTH) {
+            updateUiState { it.copy(searchText = searchText, isLoading = true) }
             searchQueryFlow.update { searchText }
+        } else {
+            searchQueryFlow.update { searchText }
+            updateUiState {
+                it.copy(
+                    isLoading = false,
+                    searchText = searchText,
+                    searchResultsModel = SearchResultsModel.Prompt
+                )
+            }
         }
     }
 
@@ -109,5 +115,6 @@ class SearchViewModel @Inject constructor(
 
         private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 300L // half a second
         private const val MINIMUM_INPUT_LENGTH = 1
+        private const val EMPTY_STRING = ""
     }
 }

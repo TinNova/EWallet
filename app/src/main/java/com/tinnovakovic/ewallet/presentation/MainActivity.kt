@@ -80,7 +80,6 @@ fun GreetingPreview() {
 
 // TODO:
 //  -- First complete the main function of the app
-//    -- Type "u", deleting it, then typing "u" again doesn't do a second network call
 //    -- If we've fetched data for "u" we don't have to fetch data for "ud" instead we can filter the original data to display only results with "ud"
 //    -- Improve HTTP Error handling, make sure we handle all the Ethplorer errors can send us.
 //  -- Second test the main function of the app
@@ -93,6 +92,7 @@ fun GreetingPreview() {
 
 
 // DONE
+//    -- Type "u", deleting it, then typing "u" again doesn't do a second network call
 //    -- Work on the rate limiting, create a delay between calls of 200ms and handle a rate limiting error as well
 //      -- Handle it as an interface so it can be used in other parts of the code
 //    -- How to handle exception in Coroutines, handle 429 exception specifically
