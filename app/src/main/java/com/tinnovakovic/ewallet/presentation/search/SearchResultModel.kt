@@ -4,7 +4,7 @@ import com.tinnovakovic.ewallet.domain.TokenBalance
 
 sealed class SearchResultsModel {
     data object Prompt : SearchResultsModel()
-    data class NoResults(val searchText: String) : SearchResultsModel()
+    data object NoResults : SearchResultsModel()
     data class Error(val errorMessage: String) : SearchResultsModel()
     data class Success(
         val tokenBalances: List<TokenBalance>,

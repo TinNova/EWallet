@@ -51,10 +51,14 @@ class SearchViewModel @Inject constructor(
             }
 
             val tokenBalances = getTokensWithBalancesUseCase.execute(searchText)
-
+            val searchResultModel = if (tokenBalances.isNotEmpty()) {
+                 SearchResultsModel.Success(tokenBalances)
+            } else {
+                SearchResultsModel.NoResults
+            }
             updateUiState {
                 it.copy(
-                    searchResultsModel = SearchResultsModel.Success(tokenBalances),
+                    searchResultsModel = searchResultModel,
                     isLoading = false,
                     searchText = searchText
                 )
