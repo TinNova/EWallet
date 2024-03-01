@@ -86,6 +86,7 @@ fun SearchScreenContent(
         ) {
             SearchTextField(uiState.searchText, uiAction)
             LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
             ) {
@@ -105,20 +106,19 @@ fun SearchScreenContent(
                     when {
                         uiState.searchText.isBlank() || uiState.searchResultsModel is SearchResultsModel.Prompt -> {
                             item {
-                                Text(text = "Search For A Token") //Consider that search bar animation here...
-//                            InitialSearchScreen(R.string.search_initial_empty_message)
+                                ErrorMessage("Search For A Token")
                             }
                         }
 
                         uiState.searchResultsModel is SearchResultsModel.NoResults -> {
                             item {
-                                Text(text = "No Tokens Found")
+                                ErrorMessage("No Tokens Found")
                             }
                         }
 
                         uiState.searchResultsModel is SearchResultsModel.Error -> {
                             item {
-                                Text(text = uiState.searchResultsModel.errorMessage)
+                                ErrorMessage(uiState.searchResultsModel.errorMessage)
                             }
                         }
 
@@ -185,4 +185,12 @@ private fun SearchTextField(searchText: String, uiAction: (UiEvents) -> Unit) {
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+}
+
+@Composable
+fun ErrorMessage(message: String) {
+    Text(
+        text = message,
+        modifier = Modifier.padding(MaterialTheme.size.large)
+    )
 }

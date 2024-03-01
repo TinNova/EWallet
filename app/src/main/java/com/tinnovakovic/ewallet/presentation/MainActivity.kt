@@ -82,6 +82,7 @@ fun GreetingPreview() {
 //  -- First complete the main function of the app
 //    -- Type "u", deleting it, then typing "u" again doesn't do a second network call
 //    -- If we've fetched data for "u" we don't have to fetch data for "ud" instead we can filter the original data to display only results with "ud"
+//    -- Improve HTTP Error handling, make sure we handle all the Ethplorer errors can send us.
 //  -- Second test the main function of the app
 //  -- Third, consider animations
 //  -- Animate the button like this: https://dribbble.com/shots/17734097-Uber-Green-App-Animation-Exploration
