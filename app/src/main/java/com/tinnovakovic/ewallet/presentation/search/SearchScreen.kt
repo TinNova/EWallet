@@ -59,6 +59,7 @@ fun SearchScreenContent(
     uiState: UiState,
     uiAction: (UiEvents) -> Unit,
 ) {
+
     Scaffold(
         topBar = {
             TopAppBar(

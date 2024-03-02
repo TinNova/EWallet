@@ -1,31 +1,24 @@
 package com.tinnovakovic.ewallet.presentation.search
 
 import android.util.Log
-import androidx.annotation.MainThread
 import androidx.lifecycle.viewModelScope
-import com.tinnovakovic.ewallet.domain.FilterListOfTokensUseCase
+import com.tinnovakovic.ewallet.data.NetworkInMemoryCache
 import com.tinnovakovic.ewallet.domain.GetTokensWithBalancesUseCase
 import com.tinnovakovic.ewallet.shared.ExceptionHandler
 import com.tinnovakovic.ewallet.shared.NavDirection
 import com.tinnovakovic.ewallet.shared.NavManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val navManager: NavManager,
     private val getTokensWithBalancesUseCase: GetTokensWithBalancesUseCase,
-    private val filterListOfTokensUseCase: FilterListOfTokensUseCase,
     private val exceptionHandler: ExceptionHandler,
+    private val networkInMemoryCache: NetworkInMemoryCache,
 ) : SearchContract.ViewModel() {
 
     override val _uiState: MutableStateFlow<SearchContract.UiState> =
@@ -50,18 +43,28 @@ class SearchViewModel @Inject constructor(
                 )
             }
 
-            val tokenBalances = getTokensWithBalancesUseCase.execute(searchText)
-            val searchResultModel = if (tokenBalances.isNotEmpty()) {
-                 SearchResultsModel.Success(tokenBalances)
+            if (networkInMemoryCache.cache.value) {
+                val tokenBalances = getTokensWithBalancesUseCase.execute(searchText)
+                val searchResultModel = if (tokenBalances.isNotEmpty()) {
+                    SearchResultsModel.Success(tokenBalances)
+                } else {
+                    SearchResultsModel.NoResults
+                }
+                updateUiState {
+                    it.copy(
+                        searchResultsModel = searchResultModel,
+                        isLoading = false,
+                        searchText = searchText
+                    )
+                }
             } else {
-                SearchResultsModel.NoResults
-            }
-            updateUiState {
-                it.copy(
-                    searchResultsModel = searchResultModel,
-                    isLoading = false,
-                    searchText = searchText
-                )
+                updateUiState {
+                    it.copy(
+                        searchResultsModel = SearchResultsModel.Error("No Internet TINTIN"),
+                        isLoading = false,
+                        searchText = searchText
+                    )
+                }
             }
         }
     }
@@ -83,9 +86,6 @@ class SearchViewModel @Inject constructor(
             searchResultsModel = SearchResultsModel.Prompt,
             isLoading = false
         )
-
-        private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 300L // half a second
-        private const val MINIMUM_INPUT_LENGTH = 1
-        private const val EMPTY_STRING = ""
     }
+
 }

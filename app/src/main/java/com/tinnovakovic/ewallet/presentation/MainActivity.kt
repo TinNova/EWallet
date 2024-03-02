@@ -16,6 +16,7 @@ import com.tinnovakovic.ewallet.presentation.home.homeScreen
 import com.tinnovakovic.ewallet.presentation.search.searchScreen
 import com.tinnovakovic.ewallet.shared.Destination
 import com.tinnovakovic.ewallet.shared.NavManager
+import com.tinnovakovic.ewallet.shared.NetworkInformationProvider
 import com.tinnovakovic.ewallet.ui.theme.EWalletTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -26,8 +27,13 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navManager: NavManager
 
+    @Inject
+    lateinit var networkInformationProvider: NetworkInformationProvider
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        networkInformationProvider.observeNetwork()
+
         setContent {
             EWalletTheme {
                 val navController = rememberNavController()
