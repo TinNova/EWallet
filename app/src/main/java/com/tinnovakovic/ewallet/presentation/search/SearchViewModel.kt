@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.tinnovakovic.ewallet.R
 import com.tinnovakovic.ewallet.data.NetworkInMemoryCache
 import com.tinnovakovic.ewallet.domain.GetTokensWithBalancesUseCase
+import com.tinnovakovic.ewallet.shared.ContextProvider
 import com.tinnovakovic.ewallet.shared.ExceptionHandler
 import com.tinnovakovic.ewallet.shared.NavDirection
 import com.tinnovakovic.ewallet.shared.NavManager
@@ -26,7 +28,8 @@ class SearchViewModel @Inject constructor(
     private val getTokensWithBalancesUseCase: GetTokensWithBalancesUseCase,
     private val exceptionHandler: ExceptionHandler,
     private val networkInMemoryCache: NetworkInMemoryCache,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val contextProvider: ContextProvider
 ) : SearchContract.ViewModel() {
 
     override val _uiState: MutableStateFlow<SearchContract.UiState> =
@@ -106,7 +109,12 @@ class SearchViewModel @Inject constructor(
             } else {
                 updateUiState {
                     it.copy(
-                        searchResultsModel = SearchResultsModel.Error("No Internet TINTIN"),
+                        searchResultsModel = SearchResultsModel
+                            .Error(
+                                contextProvider.getContext().getString(
+                                    R.string.io_error_message
+                                )
+                            ),
                         isLoading = false,
                         searchText = searchText
                     )

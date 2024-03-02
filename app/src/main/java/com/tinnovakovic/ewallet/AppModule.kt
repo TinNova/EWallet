@@ -41,7 +41,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesExceptionHandler(): ExceptionHandler = ExceptionHandlerImpl()
+    fun providesExceptionHandler(contextProvider: ContextProvider): ExceptionHandler = ExceptionHandlerImpl(contextProvider)
 
     @Provides
     @Singleton

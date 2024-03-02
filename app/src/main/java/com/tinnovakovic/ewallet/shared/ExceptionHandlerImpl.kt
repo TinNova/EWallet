@@ -1,33 +1,42 @@
 package com.tinnovakovic.ewallet.shared
 
-import retrofit2.HttpException
+import com.tinnovakovic.ewallet.R
 import java.io.IOException
 import javax.inject.Inject
 
-class ExceptionHandlerImpl @Inject constructor() : ExceptionHandler {
+class ExceptionHandlerImpl @Inject constructor(
+    private val contextProvider: ContextProvider
+) : ExceptionHandler {
+
+    private val context = contextProvider.getContext()
+
+    // Documentation for the api errors we can get
+    // https://info.etherscan.com/api-return-errors/
+    // https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API#get-top-tokens
 
     override fun getErrorMessage(throwable: Throwable): String {
         return when (throwable) {
-            is HttpException -> {
-                when (throwable.code()) {
-                    //TODO Tidy this up according to the real errors we can get
-                    // It might require a custom CallAdapter just like with Etherscan Api
-                    // https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API#get-top-tokens
-                    401 -> "Authentication Error, Please try again." //Invalid API Key
-                    429 -> "Rate limit exceeded. Please try again later."
-                    404 -> "Resource not found."
-                    500 -> "Internal server error."
-                    else -> "Unknown error occurred."
+            is IOException -> context.getString(R.string.io_error_message)
+
+            is EtherScanApiKeyException.InvalidApiKeyException,
+            is EtherScanApiKeyException.InvalidApiKeyRateLimitException -> {
+                context.getString(R.string.http_authentication_error_message)
+            }
+
+            is EtherScanApiKeyException.RateLimitException -> {
+                context.getString(R.string.rate_limit_error_message)
+            }
+
+            is EthplorerErrorException -> {
+                when (throwable.httpStatusCode) {
+                    401, 402 -> context.getString(R.string.http_authentication_error_message)
+                    400, 404, 406 -> context.getString(R.string.http_invalid_data_error_message)
+                    503 -> context.getString(R.string.server_error_message)
+                    else -> context.getString(R.string.unknown_message)
                 }
             }
 
-            is IOException -> "No internet, we've cleared the search bar, please search again.."
-            is EtherScanApiKeyException -> {
-                // https://info.etherscan.com/api-return-errors/
-                throwable.result
-            }
-
-            else -> throwable.message ?: "Unknown Error, Please Try Again."
+            else -> context.getString(R.string.unknown_message)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.tinnovakovic.ewallet.shared
 
+import com.tinnovakovic.ewallet.data.EthplorerModel
 import com.tinnovakovic.ewallet.data.TokenBalanceData
 import retrofit2.Call
 import retrofit2.CallAdapter
@@ -8,7 +9,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 sealed class ApiType {
-    data object Generic : ApiType()
+    data object Ethplorer : ApiType()
     data object Etherscan : ApiType()
 }
 
@@ -31,7 +32,7 @@ class ResultCallAdapterFactory(private val apiType: ApiType) : CallAdapter.Facto
                 override fun adapt(call: Call<Any>): Call<Result<*>> {
                     return when (apiType) {
                         ApiType.Etherscan -> EtherscanResultCall(call as Call<TokenBalanceData>) as Call<Result<*>>
-                        ApiType.Generic -> ResultCall(call) as Call<Result<*>>
+                        ApiType.Ethplorer -> EthplorerResultCall(call as Call<EthplorerModel>) as Call<Result<*>>
                     }
                 }
             }

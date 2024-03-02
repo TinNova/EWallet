@@ -11,6 +11,6 @@ interface EthplorerApi {
     suspend fun getTopTokens(
         @Query("limit") limit: Int = 100,
         @Query("apiKey") apiKey: String = BuildConfig.ETHPLORER_API_KEY //better to be in an interceptor?
-    ): Result<TopTokensData>
+    ): Result<EthplorerModel.TopTokensData>
 
 }

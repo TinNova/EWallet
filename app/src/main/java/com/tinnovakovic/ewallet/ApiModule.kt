@@ -29,7 +29,7 @@ object ApiModule {
                     .build()
             )
             .addConverterFactory(gsonConverterFactory)
-            .addCallAdapterFactory(ResultCallAdapterFactory(ApiType.Generic))
+            .addCallAdapterFactory(ResultCallAdapterFactory(ApiType.Ethplorer))
             .build()
             .create(EthplorerApi::class.java)
     }

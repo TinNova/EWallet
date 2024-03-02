@@ -1,5 +1,6 @@
 package com.tinnovakovic.ewallet.data
 
+import com.tinnovakovic.ewallet.data.EthplorerModel.TopTokensData
 import com.tinnovakovic.ewallet.shared.RetryIo
 import retrofit2.HttpException
 import javax.inject.Inject

@@ -12,7 +12,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 import java.lang.RuntimeException
-import java.net.UnknownHostException
 
 class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
     Call<Result<TokenBalanceData>> {
@@ -28,7 +27,7 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                     if (response.isSuccessful) {
                         // to test bad response
 //                        val responseBody: TokenBalanceData? = TokenBalanceData(status="0", message="NOTOK", result="Max rate limit reached")
-                        val responseBody = response.body()
+                        val responseBody: TokenBalanceData? = response.body()
                         if (responseBody != null) {
                             val status = responseBody.status
 
@@ -67,9 +66,9 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                 override fun onFailure(call: Call<TokenBalanceData>, t: Throwable) {
                     val errorMessage = when (t) {
                         is EtherScanApiKeyException -> t.result
-                        is IOException -> "No internet connection"
-                        is HttpException -> "Something went wrong!" //TODO handle this better
-                        else -> t.localizedMessage
+                        is IOException -> t.message
+                        is HttpException -> t.message
+                        else -> t.message
                     }
                     callback.onResponse(
                         this@EtherscanResultCall,
@@ -97,7 +96,7 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
     }
 
     override fun clone(): Call<Result<TokenBalanceData>> {
-        return ResultCall(delegate.clone())
+        return EtherscanResultCall(delegate.clone())
     }
 
     override fun request(): Request {

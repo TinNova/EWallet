@@ -2,4 +2,16 @@
     <string name="app_name">EWallet</string>
     <string name="wallet_address">0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045</string>
 
+    <!--  HTTP Exception Messages  -->
+    <string name="http_authentication_error_message">There is an authentication error, try again.</string>
+    <string name="http_invalid_data_error_message">The data entered was invalid, try again.</string>
+    <string name="server_error_message">Oops an error occurred with the server, sorry about that, please try again.</string>
+    <string name="unknown_message">Something has gone wrong, if you see this message often please contact us.</string>
+
+    <!--  IO Exception Messages  -->
+    <string name="io_error_message">Looks like you\'re not connected to the internet, reconnect and try again.</string>
+
+    <string name="rate_limit_error_message">We\'ve sent too many request too quickly, let\'s try again.</string>
+
+
 </resources>
