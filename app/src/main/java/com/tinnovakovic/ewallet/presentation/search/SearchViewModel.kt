@@ -9,10 +9,15 @@ import com.tinnovakovic.ewallet.shared.NavDirection
 import com.tinnovakovic.ewallet.shared.NavManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val navManager: NavManager,
@@ -23,6 +28,20 @@ class SearchViewModel @Inject constructor(
 
     override val _uiState: MutableStateFlow<SearchContract.UiState> =
         MutableStateFlow(defaultUiState)
+
+    private val searchQueryFlow = MutableStateFlow(uiState.value.searchText)
+    private var searchJob: Job? = null
+
+    init {
+        viewModelScope.launch {
+            searchQueryFlow
+                .debounce(SEARCH_INPUT_DEBOUNCE_MILLIS)
+                .collect {
+                    searchJob?.cancel()
+                    searchJob = search(it)
+                }
+        }
+    }
 
     override fun onUiEvent(event: SearchContract.UiEvents) {
         when (event) {
@@ -36,13 +55,18 @@ class SearchViewModel @Inject constructor(
 
     private fun onSearchTextChanged(searchText: String) {
         Log.d("TINTINTEST", "search text: $searchText")
-        viewModelScope.launch(coExceptionHandler) {
-            updateUiState {
-                it.copy(
-                    isLoading = true, searchText = searchText
-                )
-            }
 
+        updateUiState {
+            it.copy(
+                isLoading = true, searchText = searchText
+            )
+        }
+
+        searchQueryFlow.update { searchText }
+    }
+
+    suspend fun search(searchText: String): Job {
+        return viewModelScope.launch(coExceptionHandler) {
             if (networkInMemoryCache.cache.value) {
                 val tokenBalances = getTokensWithBalancesUseCase.execute(searchText)
                 val searchResultModel = if (tokenBalances.isNotEmpty()) {
@@ -86,6 +110,8 @@ class SearchViewModel @Inject constructor(
             searchResultsModel = SearchResultsModel.Prompt,
             isLoading = false
         )
+
+        private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 300L
     }
 
 }

@@ -29,7 +29,12 @@ class GetTokensWithBalancesUseCase @Inject constructor(
                 it.symbol.startsWith(searchText.uppercase(Locale.getDefault()).first())
             }
 
-            getLatestTokenBalances(tokensFilteredByFirstLetter)
+
+            val latestTokenBalances = getLatestTokenBalances(tokensFilteredByFirstLetter)
+
+            val filteredTokenBalances =
+                latestTokenBalances.filter { it.symbol.startsWith(searchText.uppercase(Locale.getDefault())) }
+            filteredTokenBalances
 
             // searchText starts with the same letter as savedSearch, just filter
         } else if (searchText.isNotBlank() && savedSearchStartedWith == searchText.first()
@@ -43,6 +48,7 @@ class GetTokensWithBalancesUseCase @Inject constructor(
             // searchText is blank, return an empty list and update saveSearch
         } else {
             savedSearchStartedWith = ""
+            savedTokenBalances.clear()
             emptyList()
         }
     }
