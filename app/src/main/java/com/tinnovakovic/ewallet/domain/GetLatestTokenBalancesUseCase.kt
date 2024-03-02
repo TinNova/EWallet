@@ -8,7 +8,7 @@ import com.tinnovakovic.ewallet.shared.RateLimitHandler
 import java.math.BigInteger
 import javax.inject.Inject
 
-class GetLatestTokensUseCase @Inject constructor(
+class GetLatestTokenBalancesUseCase @Inject constructor(
     private val etherscanRepo: EtherscanRepo,
     private val contextProvider: ContextProvider,
     private val fromSmallestDecimalRepresentationUseCase: FromSmallestDecimalRepresentationUseCase,
