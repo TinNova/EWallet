@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +60,10 @@ fun SearchScreenContent(
     uiState: UiState,
     uiAction: (UiEvents) -> Unit,
 ) {
+    LaunchedEffect(true) {
+        // This instead on using init{} in viewModel to prevent race condition
+        uiAction(UiEvents.Initialise)
+    }
 
     Scaffold(
         topBar = {
@@ -172,6 +177,7 @@ private fun SearchTextField(searchText: String, uiAction: (UiEvents) -> Unit) {
             .focusRequester(focusRequester)
             .fillMaxWidth(),
         shape = RoundedCornerShape(MaterialTheme.size.medium),
+        singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
     )

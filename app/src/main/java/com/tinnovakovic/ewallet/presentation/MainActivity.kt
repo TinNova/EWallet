@@ -1,6 +1,7 @@
 package com.tinnovakovic.ewallet.presentation
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -88,7 +89,7 @@ fun GreetingPreview() {
 
 // TODO:
 //  -- First complete the main function of the app
-//    -- No Results error message never occurs
+//  -- Save state in case Android terminates the app when it's in the background
 //    -- Improve HTTP Error handling, make sure we handle all the Ethplorer and Ethscaner errors can send us.
 //  -- Second write tests for the main function of the app
 //    -- Specifically test the 429, rate limiting code!
@@ -102,6 +103,7 @@ fun GreetingPreview() {
 
 
 // DONE
+//    -- No Results error message never occurs
 //    -- If we've fetched data for "u" we don't have to fetch data for "ud" instead we can filter the original data to display only results with "ud"
 //    -- Type "u", deleting it, then typing "u" again doesn't do a second network call
 //    -- Work on the rate limiting, create a delay between calls of 200ms and handle a rate limiting error as well

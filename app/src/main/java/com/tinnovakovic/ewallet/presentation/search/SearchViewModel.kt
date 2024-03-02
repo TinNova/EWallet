@@ -1,6 +1,8 @@
 package com.tinnovakovic.ewallet.presentation.search
 
 import android.util.Log
+import androidx.annotation.MainThread
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.tinnovakovic.ewallet.data.NetworkInMemoryCache
 import com.tinnovakovic.ewallet.domain.GetTokensWithBalancesUseCase
@@ -24,15 +26,28 @@ class SearchViewModel @Inject constructor(
     private val getTokensWithBalancesUseCase: GetTokensWithBalancesUseCase,
     private val exceptionHandler: ExceptionHandler,
     private val networkInMemoryCache: NetworkInMemoryCache,
+    private val savedStateHandle: SavedStateHandle
 ) : SearchContract.ViewModel() {
 
     override val _uiState: MutableStateFlow<SearchContract.UiState> =
         MutableStateFlow(defaultUiState)
 
+    private var initializeCalled = false
     private val searchQueryFlow = MutableStateFlow(uiState.value.searchText)
     private var searchJob: Job? = null
 
-    init {
+    @MainThread
+    private fun initialise() {
+        if (initializeCalled) return
+        initializeCalled = true
+
+        onSearchTextChanged(
+            savedStateHandle.getStateFlow(
+                key = SAVED_STATE_SEARCH_TEXT,
+                initialValue = ""
+            ).value
+        )
+
         viewModelScope.launch {
             searchQueryFlow
                 .debounce(SEARCH_INPUT_DEBOUNCE_MILLIS)
@@ -41,10 +56,14 @@ class SearchViewModel @Inject constructor(
                     searchJob = search(it)
                 }
         }
+
+
     }
 
     override fun onUiEvent(event: SearchContract.UiEvents) {
         when (event) {
+            is SearchContract.UiEvents.Initialise -> initialise()
+
             is SearchContract.UiEvents.UpButtonClicked -> {
                 navManager.navigate(direction = NavDirection.homeScreen)
             }
@@ -74,6 +93,9 @@ class SearchViewModel @Inject constructor(
                 } else {
                     SearchResultsModel.NoResults
                 }
+
+                savedStateHandle["searchText"] = searchText
+
                 updateUiState {
                     it.copy(
                         searchResultsModel = searchResultModel,
@@ -108,10 +130,11 @@ class SearchViewModel @Inject constructor(
         private val defaultUiState = SearchContract.UiState(
             searchText = "",
             searchResultsModel = SearchResultsModel.Prompt,
-            isLoading = false
+            isLoading = false,
         )
 
         private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 300L
+        private const val SAVED_STATE_SEARCH_TEXT = "searchText"
     }
 
 }
