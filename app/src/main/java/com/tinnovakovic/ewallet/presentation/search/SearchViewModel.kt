@@ -44,12 +44,14 @@ class SearchViewModel @Inject constructor(
         if (initializeCalled) return
         initializeCalled = true
 
-        onSearchTextChanged(
-            savedStateHandle.getStateFlow(
-                key = SAVED_STATE_SEARCH_TEXT,
-                initialValue = ""
-            ).value
-        )
+        val savedSearchText = savedStateHandle.getStateFlow(
+            key = SAVED_STATE_SEARCH_TEXT,
+            initialValue = ""
+        ).value
+
+        if (savedSearchText.isNotBlank()) {
+            onSearchTextChanged(savedSearchText)
+        }
 
         viewModelScope.launch {
             searchQueryFlow
