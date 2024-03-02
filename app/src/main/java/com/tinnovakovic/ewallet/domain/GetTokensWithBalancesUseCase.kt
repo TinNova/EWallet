@@ -10,16 +10,13 @@ import java.util.Locale
 import javax.inject.Inject
 
 class GetTokensWithBalancesUseCase @Inject constructor(
-    private val etherscanRepo: EtherscanRepo,
-    private val contextProvider: ContextProvider,
-    private val fromSmallestDecimalRepresentationUseCase: FromSmallestDecimalRepresentationUseCase,
-    private val rateLimitHandler: RateLimitHandler,
-    private val getTopTokensUseCase: GetTopTokensUseCase
+    private val getTopTokensUseCase: GetTopTokensUseCase,
+    private val getLatestTokensUseCase: GetLatestTokensUseCase
 ) {
 
     //TODO: Refactor this, currently it's not testable and breaks single source of truth
-    var savedSearchStartedWith: String = ""
-    var savedTokenBalances: MutableList<TokenBalance> = mutableListOf()
+    private var savedSearchStartedWith: String = ""
+    private var savedTokenBalances: MutableList<TokenBalance> = mutableListOf()
 
     suspend fun execute(searchText: String): List<TokenBalance> {
         // savedSearch letter is blank, do a network call
@@ -30,7 +27,8 @@ class GetTokensWithBalancesUseCase @Inject constructor(
                 it.symbol.startsWith(searchText.uppercase(Locale.getDefault()).first())
             }
 
-            val latestTokenBalances = getLatestTokenBalances(tokensFilteredByFirstLetter)
+            val latestTokenBalances = getLatestTokensUseCase.execute(tokensFilteredByFirstLetter)
+            savedTokenBalances.addAll(latestTokenBalances)
             val filteredTokenBalances =
                 latestTokenBalances.filter { it.symbol.startsWith(searchText.uppercase(Locale.getDefault())) }
             filteredTokenBalances
@@ -50,37 +48,5 @@ class GetTokensWithBalancesUseCase @Inject constructor(
             savedTokenBalances.clear()
             emptyList()
         }
-    }
-
-    private suspend fun getLatestTokenBalances(tokens: List<Token>): List<TokenBalance> {
-        val tokenBalances: List<TokenBalance> = tokens.mapNotNull {
-            val tokenBalanceData: TokenBalanceData? = etherscanRepo.getLatestTokenBalance(
-                walletAddress = contextProvider.getContext().getString(R.string.wallet_address),
-                tokenAddress = it.address
-            ).getOrNull()
-
-            if (tokenBalanceData != null) {
-                val tokenBalance = TokenBalance(
-                    symbol = it.symbol,
-                    result = fromSmallestDecimalRepresentationUseCase
-                        .execute(
-                            smallestBalance = tokenBalanceData.result.toBigInteger(),
-                            decimalPlaces = it.decimals.toInt()
-                        ),
-                    isResultZero = tokenBalanceData.result.toBigInteger() == BigInteger.ZERO
-                )
-
-                if (tokens.size >= 5) {
-                    rateLimitHandler.rateLimitDelay()
-                }
-
-                savedTokenBalances.add(tokenBalance)
-                tokenBalance
-            } else {
-                null// skip it if it's null
-            }
-        }
-
-        return tokenBalances
     }
 }

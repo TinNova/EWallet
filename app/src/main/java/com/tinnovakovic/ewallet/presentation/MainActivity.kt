@@ -88,6 +88,7 @@ fun GreetingPreview() {
 
 // TODO:
 //  -- First complete the main function of the app
+//  -- Double check process death using Don't Keep Activity
 //    -- When restoring state after system kills app the TextField cursor is on the left instead of the right
 //    -- GetTokensWithBalancesUseCase has global vals, this needs to be removed to test it
 //  -- Second write tests for the main function of the app
