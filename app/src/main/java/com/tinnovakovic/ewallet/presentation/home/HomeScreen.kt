@@ -16,13 +16,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tinnovakovic.ewallet.R
 import com.tinnovakovic.ewallet.presentation.home.HomeContract.UiEvents
 import com.tinnovakovic.ewallet.presentation.home.HomeContract.UiState
 
@@ -42,6 +45,10 @@ fun HomeScreenContent(
     uiState: UiState,
     uiAction: (UiEvents) -> Unit,
 ) {
+    LaunchedEffect(true) {
+        // This instead on using init{} in viewModel to prevent race condition
+        uiAction(HomeContract.UiEvents.Initialise)
+    }
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -52,12 +59,16 @@ fun HomeScreenContent(
     ) {
 
         Text(
-            text = "Wallet Address",
-            modifier = Modifier.padding(MaterialTheme.size.medium)
+            text = stringResource(R.string.home_screen_title),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .padding(MaterialTheme.size.medium)
         )
         Text(
-            text = "Hard coded wallet address",
-            fontSize = 16.sp,
+            text = uiState.walletAddress,
+            fontSize = 24.sp,
             modifier = Modifier.padding(MaterialTheme.size.medium)
         ) //Put it in encrypted sharedPref
 

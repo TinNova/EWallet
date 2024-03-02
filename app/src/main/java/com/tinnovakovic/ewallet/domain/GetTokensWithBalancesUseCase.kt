@@ -17,6 +17,7 @@ class GetTokensWithBalancesUseCase @Inject constructor(
     private val getTopTokensUseCase: GetTopTokensUseCase
 ) {
 
+    //TODO: Refactor this, currently it's not testable and breaks single source of truth
     var savedSearchStartedWith: String = ""
     var savedTokenBalances: MutableList<TokenBalance> = mutableListOf()
 
@@ -29,9 +30,7 @@ class GetTokensWithBalancesUseCase @Inject constructor(
                 it.symbol.startsWith(searchText.uppercase(Locale.getDefault()).first())
             }
 
-
             val latestTokenBalances = getLatestTokenBalances(tokensFilteredByFirstLetter)
-
             val filteredTokenBalances =
                 latestTokenBalances.filter { it.symbol.startsWith(searchText.uppercase(Locale.getDefault())) }
             filteredTokenBalances
@@ -74,12 +73,9 @@ class GetTokensWithBalancesUseCase @Inject constructor(
                 if (tokens.size >= 5) {
                     rateLimitHandler.rateLimitDelay()
                 }
-//                    savedTokenBalances.add(tokenBalance)
-//                    tokenBalance
-//                } else {
+
                 savedTokenBalances.add(tokenBalance)
                 tokenBalance
-//                }
             } else {
                 null// skip it if it's null
             }

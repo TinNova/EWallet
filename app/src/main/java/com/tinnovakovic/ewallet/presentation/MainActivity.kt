@@ -89,8 +89,8 @@ fun GreetingPreview() {
 
 // TODO:
 //  -- First complete the main function of the app
-//    -- Improve HTTP Error handling, make sure we handle all the Ethplorer and Ethscaner errors can send us.
 //    -- When restoring state after system kills app the TextField cursor is on the left instead of the right
+//    -- GetTokensWithBalancesUseCase has global vals, this needs to be removed to test it
 //  -- Second write tests for the main function of the app
 //    -- Specifically test the 429, rate limiting code!
 //  -- Third, consider animations
@@ -103,6 +103,7 @@ fun GreetingPreview() {
 
 
 // DONE
+//    -- Improve HTTP Error handling, make sure we handle all the Ethplorer and Ethscaner errors can send us.
 //    -- Save state in case Android terminates the app when it's in the background
 //    -- No Results error message never occurs
 //    -- If we've fetched data for "u" we don't have to fetch data for "ud" instead we can filter the original data to display only results with "ud"

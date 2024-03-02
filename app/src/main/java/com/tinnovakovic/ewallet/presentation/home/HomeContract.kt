@@ -11,10 +11,11 @@ interface HomeContract {
 
     @Immutable
     data class UiState(
-        val number: Int
+        val walletAddress: String
     ) : BaseUiState {}
 
     sealed class UiEvents : BaseUiEvent {
+        data object Initialise : UiEvents()
         data object ButtonClicked : UiEvents()
     }
 }
