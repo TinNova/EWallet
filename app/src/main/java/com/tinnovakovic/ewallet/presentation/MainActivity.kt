@@ -1,7 +1,6 @@
 package com.tinnovakovic.ewallet.presentation
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -15,9 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.tinnovakovic.ewallet.presentation.home.homeScreen
 import com.tinnovakovic.ewallet.presentation.search.searchScreen
-import com.tinnovakovic.ewallet.shared.Destination
-import com.tinnovakovic.ewallet.shared.NavManager
-import com.tinnovakovic.ewallet.shared.NetworkInformationProvider
+import com.tinnovakovic.ewallet.shared.navigation.Destination
+import com.tinnovakovic.ewallet.shared.navigation.NavManager
+import com.tinnovakovic.ewallet.shared.network.NetworkInformationProvider
 import com.tinnovakovic.ewallet.ui.theme.EWalletTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

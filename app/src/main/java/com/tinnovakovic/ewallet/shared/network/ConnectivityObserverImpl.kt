@@ -1,8 +1,9 @@
-package com.tinnovakovic.ewallet.shared
+package com.tinnovakovic.ewallet.shared.network
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import com.tinnovakovic.ewallet.shared.ContextProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

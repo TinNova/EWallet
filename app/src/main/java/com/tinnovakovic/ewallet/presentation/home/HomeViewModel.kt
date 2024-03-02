@@ -3,8 +3,8 @@ package com.tinnovakovic.ewallet.presentation.home
 import androidx.annotation.MainThread
 import com.tinnovakovic.ewallet.R
 import com.tinnovakovic.ewallet.shared.ContextProvider
-import com.tinnovakovic.ewallet.shared.NavDirection
-import com.tinnovakovic.ewallet.shared.NavManager
+import com.tinnovakovic.ewallet.shared.navigation.NavDirection
+import com.tinnovakovic.ewallet.shared.navigation.NavManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject

@@ -1,6 +1,6 @@
 package com.tinnovakovic.ewallet
 
-import com.tinnovakovic.ewallet.shared.NavManager
+import com.tinnovakovic.ewallet.shared.navigation.NavManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

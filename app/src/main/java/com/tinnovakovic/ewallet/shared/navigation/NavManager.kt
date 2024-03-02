@@ -1,6 +1,6 @@
-package com.tinnovakovic.ewallet.shared
+package com.tinnovakovic.ewallet.shared.navigation
 
-import com.tinnovakovic.ewallet.shared.NavDirection.Default
+import com.tinnovakovic.ewallet.shared.navigation.NavDirection.Default
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /**

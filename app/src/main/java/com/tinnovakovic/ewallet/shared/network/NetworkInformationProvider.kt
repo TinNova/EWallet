@@ -1,4 +1,4 @@
-package com.tinnovakovic.ewallet.shared
+package com.tinnovakovic.ewallet.shared.network
 
 interface NetworkInformationProvider {
 
