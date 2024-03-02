@@ -53,21 +53,11 @@ class EthplorerResultCall(val delegate: Call<EthplorerModel>) :
                                 }
                             }
                         }
-                    } else {
-                        callback.onResponse(
-                            this@EthplorerResultCall,
-                            Response.success(
-                                Result.failure(
-                                    HttpException(response)
-                                )
-                            )
-                        )
                     }
                 }
 
                 override fun onFailure(call: Call<EthplorerModel>, t: Throwable) {
                     val errorMessage = when (t) {
-                        is EthplorerErrorException -> t.errorMessage
                         is IOException -> t.message
                         is HttpException -> t.message()
                         else -> t.message

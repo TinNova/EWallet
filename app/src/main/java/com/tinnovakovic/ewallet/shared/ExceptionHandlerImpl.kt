@@ -1,6 +1,7 @@
 package com.tinnovakovic.ewallet.shared
 
 import com.tinnovakovic.ewallet.R
+import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
@@ -32,6 +33,14 @@ class ExceptionHandlerImpl @Inject constructor(
                     401, 402 -> context.getString(R.string.http_authentication_error_message)
                     400, 404, 406 -> context.getString(R.string.http_invalid_data_error_message)
                     503 -> context.getString(R.string.server_error_message)
+                    else -> context.getString(R.string.unknown_message)
+                }
+            }
+
+            is HttpException -> {
+                when (throwable.code()) {
+                    in 400..499 -> context.getString(R.string.generic_four_hundred_error_message)
+                    in 500..599 -> context.getString(R.string.generic_five_hundred_error_message)
                     else -> context.getString(R.string.unknown_message)
                 }
             }

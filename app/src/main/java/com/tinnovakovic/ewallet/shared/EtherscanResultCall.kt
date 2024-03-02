@@ -51,21 +51,11 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                                 )
                             }
                         }
-                    } else {
-                        callback.onResponse(
-                            this@EtherscanResultCall,
-                            Response.success(
-                                Result.failure(
-                                    HttpException(response)
-                                )
-                            )
-                        )
                     }
                 }
 
                 override fun onFailure(call: Call<TokenBalanceData>, t: Throwable) {
                     val errorMessage = when (t) {
-                        is EtherScanApiKeyException -> t.result
                         is IOException -> t.message
                         is HttpException -> t.message
                         else -> t.message
