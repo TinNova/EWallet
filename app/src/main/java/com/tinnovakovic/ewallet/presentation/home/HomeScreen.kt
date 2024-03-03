@@ -1,12 +1,10 @@
 package com.tinnovakovic.ewallet.presentation.home
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import com.tinnovakovic.ewallet.ui.theme.size
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,39 +49,44 @@ fun HomeScreenContent(
         uiAction(HomeContract.UiEvents.Initialise)
     }
 
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.7f)
-    ) {
+    Scaffold { scaffoldPadding ->
 
-        Text(
-            text = stringResource(R.string.home_screen_title),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .weight(1f, fill = false)
-                .padding(MaterialTheme.size.medium)
-        )
-        Text(
-            text = uiState.walletAddress,
-            fontSize = 24.sp,
-            modifier = Modifier.padding(MaterialTheme.size.medium)
-        ) //Put it in encrypted sharedPref
-
-        Spacer(modifier = Modifier.height(MaterialTheme.size.medium + MaterialTheme.size.extraLarge))
-        OutlinedButton(
-            shape = RoundedCornerShape(MaterialTheme.size.medium),
-            contentPadding = PaddingValues(horizontal = MaterialTheme.size.extraLarge, vertical = MaterialTheme.size.large),
-            onClick = {
-                uiAction(UiEvents.ButtonClicked)
-            }
+                .padding(scaffoldPadding)
+                .fillMaxWidth()
+                .fillMaxHeight(0.7f)
         ) {
-            Text(text = "ERC20 TOKENS")
+
+            Text(
+                text = stringResource(R.string.home_screen_title),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .padding(MaterialTheme.size.medium)
+            )
+            Text(
+                text = uiState.walletAddress,
+                fontSize = 24.sp,
+                modifier = Modifier.padding(MaterialTheme.size.medium)
+            ) //Put it in encrypted sharedPref
+
+            Spacer(modifier = Modifier.height(MaterialTheme.size.medium + MaterialTheme.size.extraLarge))
+            OutlinedButton(
+                shape = RoundedCornerShape(MaterialTheme.size.medium),
+                contentPadding = PaddingValues(
+                    horizontal = MaterialTheme.size.extraLarge,
+                    vertical = MaterialTheme.size.large
+                ),
+                onClick = {
+                    uiAction(UiEvents.ButtonClicked)
+                }
+            ) {
+                Text(text = "ERC20 TOKENS")
+            }
         }
     }
-
-
 }
