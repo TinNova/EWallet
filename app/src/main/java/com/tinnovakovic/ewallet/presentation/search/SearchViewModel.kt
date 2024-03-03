@@ -1,6 +1,5 @@
 package com.tinnovakovic.ewallet.presentation.search
 
-import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
