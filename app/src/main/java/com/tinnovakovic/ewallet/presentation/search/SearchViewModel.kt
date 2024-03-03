@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val navManager: NavManager,
@@ -55,14 +54,11 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             searchQueryFlow
-                .debounce(SEARCH_INPUT_DEBOUNCE_MILLIS)
                 .collect {
                     searchJob?.cancel()
                     searchJob = search(it)
                 }
         }
-
-
     }
 
     override fun onUiEvent(event: SearchContract.UiEvents) {
@@ -143,7 +139,6 @@ class SearchViewModel @Inject constructor(
             isLoading = false,
         )
 
-        private const val SEARCH_INPUT_DEBOUNCE_MILLIS = 300L
         private const val SAVED_STATE_SEARCH_TEXT = "searchText"
     }
 

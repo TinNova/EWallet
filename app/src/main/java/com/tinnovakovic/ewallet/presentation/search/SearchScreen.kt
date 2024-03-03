@@ -16,13 +16,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,11 +33,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight.Companion.W400
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.font.FontWeight.Companion.W600
+import androidx.compose.ui.text.font.FontWeight.Companion.W800
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tinnovakovic.ewallet.domain.TokenBalance
@@ -128,6 +135,9 @@ fun SearchScreenContent(
                             items(count = tokenBalances.size) { index ->
                                 val tokenBalance = tokenBalances[index]
                                 TokenBalanceItem(tokenBalance)
+                                if (index < tokenBalances.size - 1) {
+                                    HorizontalDivider(modifier = Modifier.padding(start = MaterialTheme.size.large))
+                                }
                             }
                         }
                     }
@@ -139,23 +149,56 @@ fun SearchScreenContent(
 
 @Composable
 private fun TokenBalanceItem(tokenBalance: TokenBalance) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = MaterialTheme.size.extraLarge,
-                vertical = MaterialTheme.size.medium
-            )
+    Column(
+        modifier = Modifier.padding(
+            top = MaterialTheme.size.medium,
+            bottom = MaterialTheme.size.medium,
+            start = MaterialTheme.size.large,
+            end = MaterialTheme.size.medium
+        )
     ) {
-        Text(
-            text = "${tokenBalance.symbol} Balance:",
-            fontWeight = W600
-        )
-        Text(
-            text = "${tokenBalance.result} ${tokenBalance.symbol}",
-            color = if (tokenBalance.isResultZero) Red else Green
-        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = MaterialTheme.size.extraSmall)
+        ) {
+            Text(
+                text = tokenBalance.symbol,
+                fontWeight = W600,
+            )
+
+            Row {
+                Text(
+                    color = Gray,
+                    text = "Currency | "
+                )
+
+                Text(
+                    text = tokenBalance.symbol,
+                    maxLines = 1,
+                )
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Balance",
+                modifier = Modifier.padding(end = MaterialTheme.size.medium)
+            )
+
+            Text(
+                text = tokenBalance.result,
+                fontWeight = W400,
+                color = if (tokenBalance.isResultZero) Red else Green,
+                maxLines = 2,
+                overflow = TextOverflow.Visible
+            )
+        }
     }
 }
 

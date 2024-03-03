@@ -15,16 +15,7 @@ class GetTokensWithBalancesUseCase @Inject constructor(
         // savedSearch letter is blank, do a network call
         return if (searchCache.savedSearchStartedWith.isBlank()) {
             searchCache.savedSearchStartedWith = searchText.first().toString()
-            val tokens = getTopTokensUseCase.execute()
-            val tokensFilteredByFirstLetter = tokens.filter {
-                it.symbol.startsWith(searchText.uppercase(Locale.getDefault()).first())
-            }
-
-            val latestTokenBalances = getLatestTokensUseCase.execute(tokensFilteredByFirstLetter)
-            searchCache.savedTokenBalances.addAll(latestTokenBalances)
-            val filteredTokenBalances =
-                latestTokenBalances.filter { it.symbol.startsWith(searchText.uppercase(Locale.getDefault())) }
-            filteredTokenBalances
+            fetchTokensAndFilterForBalances(searchText, searchCache)
 
             // searchText starts with the same letter as savedSearch, just filter
         } else if (searchText.isNotBlank() && searchCache.savedSearchStartedWith == searchText.first()
@@ -32,8 +23,17 @@ class GetTokensWithBalancesUseCase @Inject constructor(
         ) {
             searchCache.savedSearchStartedWith = searchText.first().toString()
             val filteredTokenBalances =
-                searchCache.savedTokenBalances.filter { it.symbol.startsWith(searchText.uppercase(Locale.getDefault())) }
-            filteredTokenBalances
+                searchCache.savedTokenBalances.filter {
+                    it.symbol.startsWith(
+                        searchText.uppercase(
+                            Locale.getDefault()
+                        )
+                    )
+                }
+
+            return filteredTokenBalances.ifEmpty {
+                fetchTokensAndFilterForBalances(searchText, searchCache)
+            }
 
             // searchText is blank, return an empty list and update saveSearch
         } else {
@@ -43,9 +43,22 @@ class GetTokensWithBalancesUseCase @Inject constructor(
         }
     }
 
+    private suspend fun fetchTokensAndFilterForBalances(
+        searchText: String,
+        searchCache: SearchCache
+    ): List<TokenBalance> {
+        val tokens = getTopTokensUseCase.execute()
+        val tokensFilteredByFirstLetter = tokens.filter {
+            it.symbol.startsWith(searchText.uppercase(Locale.getDefault()).first())
+        }
+
+        val latestTokenBalances = getLatestTokensUseCase.execute(tokensFilteredByFirstLetter)
+        searchCache.savedTokenBalances.addAll(latestTokenBalances)
+        return latestTokenBalances.filter { it.symbol.startsWith(searchText.uppercase(Locale.getDefault())) }
+    }
+
     data class SearchCache(
         var savedSearchStartedWith: String = "",
         var savedTokenBalances: MutableList<TokenBalance> = mutableListOf()
     )
-
 }
