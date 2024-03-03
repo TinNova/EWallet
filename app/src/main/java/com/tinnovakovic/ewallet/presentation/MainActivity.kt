@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -31,6 +31,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         networkInformationProvider.observeNetwork()
 
+        var isRecoveringFromProcessDeath = savedInstanceState?.let {
+            savedInstanceState.getBoolean(RESTORING_FROM_PROCESS_DEATH, false)
+        } ?: false
+
         setContent {
             EWalletTheme {
                 val navController = rememberNavController()
@@ -47,11 +51,28 @@ class MainActivity : ComponentActivity() {
                     }
 
                     navManager.commands.collectAsState().value.also { command ->
-                        if (command.destinationRoute.isNotEmpty()) navController.navigate(command.destinationRoute)
+                        if (isRecoveringFromProcessDeath) {
+                            isRecoveringFromProcessDeath = false
+                        } else {
+                            if (command.destinationRoute.isNotEmpty()) navController.navigate(
+                                command.destinationRoute
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(RESTORING_FROM_PROCESS_DEATH, true)
+
+    }
+
+    companion object {
+        const val RESTORING_FROM_PROCESS_DEATH = "restoringFromProcessDeath"
     }
 
 }
@@ -75,9 +96,6 @@ class MainActivity : ComponentActivity() {
 
 // TODO:
 //  -- First complete the main function of the app
-//  -- Double check process death using Don't Keep Activity
-//    -- When restoring state after system kills app the TextField cursor is on the left instead of the right
-//    -- GetTokensWithBalancesUseCase has global vals, this needs to be removed to test it
 //  -- Second write tests for the main function of the app
 //    -- Specifically test the 429, rate limiting code!
 //  -- Third, consider animations
@@ -90,6 +108,9 @@ class MainActivity : ComponentActivity() {
 
 
 // DONE
+//  -- Double check process death using Don't Keep Activity
+//    -- When restoring state after system kills app the TextField cursor is on the left instead of the right
+//    -- GetTokensWithBalancesUseCase has global vals, this needs to be removed to test it
 //    -- Improve HTTP Error handling, make sure we handle all the Ethplorer and Ethscaner errors can send us.
 //    -- Save state in case Android terminates the app when it's in the background
 //    -- No Results error message never occurs

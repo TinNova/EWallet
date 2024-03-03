@@ -13,10 +13,8 @@ import com.tinnovakovic.ewallet.shared.navigation.NavDirection
 import com.tinnovakovic.ewallet.shared.navigation.NavManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,13 +41,8 @@ class SearchViewModel @Inject constructor(
         if (initializeCalled) return
         initializeCalled = true
 
-        val savedSearchText = savedStateHandle.getStateFlow(
-            key = SAVED_STATE_SEARCH_TEXT,
-            initialValue = ""
-        ).value
-
-        if (savedSearchText.isNotBlank()) {
-            onSearchTextChanged(savedSearchText)
+        savedStateHandle.get<String>(SAVED_STATE_SEARCH_TEXT)?.let {
+            onSearchTextChanged(it)
         }
 
         viewModelScope.launch {
@@ -74,7 +67,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onSearchTextChanged(searchText: String) {
-        Log.d("TINTINTEST", "search text: $searchText")
+        savedStateHandle[SAVED_STATE_SEARCH_TEXT] = searchText
 
         updateUiState {
             it.copy(
@@ -94,8 +87,6 @@ class SearchViewModel @Inject constructor(
                 } else {
                     SearchResultsModel.NoResults
                 }
-
-                savedStateHandle["searchText"] = searchText
 
                 updateUiState {
                     it.copy(
@@ -139,7 +130,7 @@ class SearchViewModel @Inject constructor(
             isLoading = false,
         )
 
-        private const val SAVED_STATE_SEARCH_TEXT = "searchText"
+        private const val SAVED_STATE_SEARCH_TEXT = "savedStateSearchText"
     }
 
 }
