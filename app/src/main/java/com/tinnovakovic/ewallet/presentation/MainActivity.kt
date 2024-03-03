@@ -5,11 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.tinnovakovic.ewallet.presentation.home.homeScreen
@@ -37,10 +34,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             EWalletTheme {
                 val navController = rememberNavController()
+
+
                 Scaffold { innerPadding ->
-                    navManager.commands.collectAsState().value.also { command ->
-                        if (command.destinationRoute.isNotEmpty()) navController.navigate(command.destinationRoute)
-                    }
                     NavHost(
                         navController = navController,
                         startDestination = Destination.Home.name,
@@ -49,26 +45,15 @@ class MainActivity : ComponentActivity() {
                         homeScreen()
                         searchScreen()
                     }
+
+                    navManager.commands.collectAsState().value.also { command ->
+                        if (command.destinationRoute.isNotEmpty()) navController.navigate(command.destinationRoute)
+                    }
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EWalletTheme {
-        Greeting("Android")
-    }
 }
 
 // TODO Question From Argent:
@@ -85,6 +70,8 @@ fun GreetingPreview() {
 //    --  Answer: In GetTokensWithBalancesUseCase we have a delay of 200ms if the list contains 5 or more tokens, this prevents the limit ever being hit, this is preferred to hitting the limit and then doing exponential backoff
 //  -- Question: What improvements would you make
 //    --  Answer: If the rate limiting didn't exist I would create a loop that starts every call in an async call prevent a queue occuring where one needs to complete before the next
+//    --  Answer: Colour themeing, the light and dark theme green and red balance colour are the same
+//    --  Answer: System Process Death is not properly handled, ideally the state of the search should be restored
 
 // TODO:
 //  -- First complete the main function of the app
