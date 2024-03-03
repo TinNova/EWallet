@@ -43,7 +43,6 @@ class GetTokensWithBalancesUseCaseTest {
         runTest {
             //GIVEN
             val searchText = "FT"
-            val savedTokenBalances = listOf<TokenBalance>()
             val searchCache = SearchCache(
                 "F",
                 mutableListOf(
@@ -68,6 +67,40 @@ class GetTokensWithBalancesUseCaseTest {
             //THEN
             assertEquals(expected, result)
             assertEquals(searchCache.savedSearchStartedWith, searchText.first().toString())
+        }
+
+    @Test
+    fun `GIVEN searchText is FT, savedSearchText is F and savedTokenBalances is empty WHEN execute(), THEN fetch tokens and tokenBalances and return a new tokenBalances list`() =
+        runTest {
+            //GIVEN
+            val searchText = "FT"
+            val searchCache = SearchCache(
+                "F", mutableListOf()
+            )
+
+            val tokens = listOf(
+                Token(symbol = "FTSE", address = "", decimals = ""),
+                Token(symbol = "FTSEE", address = "", decimals = ""),
+                Token(symbol = "APPLE", address = "", decimals = ""),
+                Token(symbol = "PEAR", address = "", decimals = ""),
+            )
+
+            val expected = listOf(
+                TokenBalance(symbol = "FTSE", result = "", false),
+                TokenBalance(symbol = "FTSEE", result = "", false)
+            )
+
+            every { searchInMemoryCache.cache.value } returns searchCache
+            coEvery { getTopTokensUseCase.execute() } returns tokens
+            coEvery { getLatestTokenBalancesUseCase.execute(tokens.take(2)) } returns expected
+
+            //WHEN
+            val result = sut.execute(searchText)
+
+            //THEN
+            assertEquals(expected, result)
+            assertEquals(searchCache.savedSearchStartedWith, searchText.first().toString())
+            assertEquals(searchCache.savedTokenBalances, result)
         }
 
     @Test
@@ -102,5 +135,4 @@ class GetTokensWithBalancesUseCaseTest {
             assertEquals(searchCache.savedTokenBalances, result)
 
         }
-
 }
