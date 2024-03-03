@@ -1,5 +1,6 @@
 package com.tinnovakovic.ewallet.shared
 
+import android.util.Log
 import com.tinnovakovic.ewallet.data.EthplorerModel
 import okhttp3.Request
 import okio.Timeout
@@ -20,8 +21,8 @@ class EthplorerResultCall(val delegate: Call<EthplorerModel>) :
                     call: Call<EthplorerModel>,
                     response: Response<EthplorerModel>
                 ) {
-                    if (response.isSuccessful) {
 
+                    if (response.isSuccessful) {
                         val responseBody: EthplorerModel? = when (response.body()) {
                             is EthplorerModel.TopTokensData -> response.body()
                             is EthplorerModel.ErrorData -> response.body()
@@ -53,6 +54,15 @@ class EthplorerResultCall(val delegate: Call<EthplorerModel>) :
                                 }
                             }
                         }
+                    } else {
+                        callback.onResponse(
+                            this@EthplorerResultCall,
+                            Response.success(
+                                Result.failure(
+                                    HttpException(response)
+                                )
+                            )
+                        )
                     }
                 }
 

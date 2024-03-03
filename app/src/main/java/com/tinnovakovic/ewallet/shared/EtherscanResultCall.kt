@@ -1,5 +1,6 @@
 package com.tinnovakovic.ewallet.shared
 
+import android.util.Log
 import com.tinnovakovic.ewallet.data.TokenBalanceData
 import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException.InvalidApiKeyException
 import com.tinnovakovic.ewallet.shared.EtherScanApiKeyException.InvalidApiKeyRateLimitException
@@ -25,7 +26,7 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                 ) {
 
                     if (response.isSuccessful) {
-                        // to test bad response
+//                         to test bad response
 //                        val responseBody: TokenBalanceData? = TokenBalanceData(status="0", message="NOTOK", result="Max rate limit reached")
                         val responseBody: TokenBalanceData? = response.body()
                         if (responseBody != null) {
@@ -51,6 +52,15 @@ class EtherscanResultCall(val delegate: Call<TokenBalanceData>) :
                                 )
                             }
                         }
+                    } else {
+                        callback.onResponse(
+                            this@EtherscanResultCall,
+                            Response.success(
+                                Result.failure(
+                                    HttpException(response)
+                                )
+                            )
+                        )
                     }
                 }
 
