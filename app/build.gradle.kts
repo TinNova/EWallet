@@ -35,7 +35,7 @@ android {
 
     defaultConfig {
         applicationId = "com.tinnovakovic.ewallet"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
