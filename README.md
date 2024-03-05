@@ -4,7 +4,11 @@
 This is a portfolio project that demonstrates the use of Compose, Coroutines, Hilt, Jetpack Navigation and ViewModel in a Clean Architecture with MVI for the presentation layer.
 
 ### App Functionality
-Check your crypto account balances. The first screen will show a hardcoded wallet address, the second screen will show a search bar where you can search for your ERC-20 token balances.
+The app fetches the top 50 Etherium tokens then displays the amount of each token you possess as you search. Searching for "p" will display all tokens from the top 50 that start with "p", typing additional letters will filter the list further.
+
+The app handles all Api errors as stated in the API documentation
+* https://info.etherscan.com/api-return-errors/
+* https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API
 
 ### Technical Challenges
 There is a rate limit of 5 network calls per minute. A two pronged solution has been created for this:
