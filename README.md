@@ -12,8 +12,8 @@ The app handles all Api errors as stated in the API documentation
 
 ### Technical Challenges
 There is a rate limit of 5 network calls per minute. A two pronged solution has been created for this:
-* A delay of 200ms is applied whenever more than 5 network calls are requested.
-* If a 429 rate limit is still returned then a retry with exponential backoff is implemented. 
+* A delay of 200ms is applied whenever more than 5 network calls are requested at once.
+* If a 429 rate limit is still returned then a retry with exponential backoff is triggered. 
 
 ## Tech-Stack
 
