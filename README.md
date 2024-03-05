@@ -43,5 +43,3 @@ ETHERSCAN_API_KEY = {api_key}
 WALLET_ADDRESS = {wallet_address}
 ```
 
-## Download An APK To Test The App
-Link to Google Drive
